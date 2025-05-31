@@ -1,0 +1,1 @@
+/usr/bin/g++ -g -rdynamic CMakeFiles/testSkipList.dir/testSkipList.cc.o -o ../../../bin/testSkipList   -L/home/zilu/桌面/DKVStorage/lib  -Wl,-rpath,/home/zilu/桌面/DKVStorage/lib ../../libskip_list_on_raft.a ../../src/rpc/librpc_lib.a -lprotobuf -lmuduo_net -lmuduo_base -lpthread -ldl -lboost_serialization 
