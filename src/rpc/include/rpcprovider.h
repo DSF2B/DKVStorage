@@ -1,16 +1,21 @@
 #pragma once
 #include <google/protobuf/service.h>
-#include <memory>
+#include <google/protobuf/descriptor.h>
+
 #include <muduo/net/TcpServer.h>
 #include <muduo/net/EventLoop.h>
 #include <muduo/net/InetAddress.h>
 #include <muduo/net/TcpConnection.h>
-#include <google/protobuf/descriptor.h>
+#include <arpa/inet.h>
 
+#include <unistd.h>
+#include <cstring>
+#include <fstream>
+#include <netdb.h>
 #include <string>
 #include <functional>
 #include <unordered_map>
-
+#include <memory>
 //框架提供的用于发布rpc服务的网络对象类,向其他rpc节点请求服务
 
 class RpcProvider
@@ -19,9 +24,10 @@ public:
     //应当可以接受任意的Service(包括派生类UserServiceRpc等)，通知需要调用的服务
     void NotifyService(google::protobuf::Service *service);
     //启动rpc服务节点，开始提供rpc远程调用服务
-    void Run();
+    void Run(int nodeIndex, short port);
 private:
     muduo::net::EventLoop m_eventLoop;
+    std::shared_ptr<muduo::net::TcpServer> muduo_server_;
     //服务类型信息
     struct ServiceInfo{
         google::protobuf::Service *m_service;//服务对象

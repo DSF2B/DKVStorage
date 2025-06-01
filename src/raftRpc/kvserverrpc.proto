@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package raftKVRpcProtoc;
+
+option cc_generic_services = true;
+
+message GetRequest{
+  bytes Key = 1 ;
+  bytes ClientId = 2 ;
+  int32 RequestId = 3;
+}
+message GetResponse{
+  bytes Err = 1;
+  bytes Value = 2;
+
+}
+
+message PutAppendRequest{
+  bytes Key = 1;
+  bytes  Value = 2 ;
+  bytes  Op = 3;
+  // "Put" or "Append"
+  // You'll have to add definitions here.
+  // Field names must start with capital letters,
+  // otherwise RPC will break.
+  bytes  ClientId = 4;
+  int32  RequestId = 5;
+}
+
+message PutAppendResponse{
+  bytes Err = 1;
+}
+
+service KVServerRpc{
+    rpc Get(GetRequest)returns(GetResponse);
+    rpc PutAppend(PutAppendRequest)returns(PutAppendResponse);
+}

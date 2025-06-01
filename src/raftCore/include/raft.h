@@ -150,7 +150,7 @@ private:
         Leader
     };
     Status status_;
-    std::shared_ptr<LockQueue<ApplyMsg>> apply_chan_;//与外部client通信管道，client从这里取日志
+    std::shared_ptr<LockQueue<ApplyMsg>> apply_chan_;//与kvServer通信管道
     std::chrono::_V2::system_clock::time_point last_rest_election_time_;//选举超时时间
     std::chrono::_V2::system_clock::time_point last_rest_heartbeat_time_;//心跳超时时间
     //用于传入快照点

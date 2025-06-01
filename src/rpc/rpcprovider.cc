@@ -28,23 +28,40 @@ void RpcProvider::NotifyService(google::protobuf::Service *service){
 
 }
 //启动rpc服务节点，开始提供rpc远程调用服务
-void RpcProvider::Run(){
-    std::string ip=MprpcApplication::GetInstance().GetConfig().Load("rpcserverip");
-    uint16_t port = atoi(MprpcApplication::GetInstance().GetConfig().Load("rpcserverport").c_str());
+void RpcProvider::Run(int nodeIndex, short port){
+    char *ipC;
+    char hname[128];
+    struct hostent *hent;
+    gethostname(hname, sizeof(hname));
+    hent = gethostbyname(hname);
+    for (int i = 0; hent->h_addr_list[i]; i++) {
+        ipC = inet_ntoa(*(struct in_addr *)(hent->h_addr_list[i]));  // IP地址
+    }
+    std::string ip = std::string(ipC);
+    //写入文件 "test.conf"
+    std::string node = "node" + std::to_string(nodeIndex);
+    std::ofstream outfile;
+    outfile.open("test.conf", std::ios::app);  //打开文件并追加写入
+    if (!outfile.is_open()) {
+    std::cout << "打开文件失败！" << std::endl;
+    exit(EXIT_FAILURE);
+    }
+    outfile << node + "ip=" + ip << std::endl;
+    outfile << node + "port=" + std::to_string(port) << std::endl;
+    outfile.close();
+
     muduo::net::InetAddress address(ip,port);
     //创建Tcpserver
-    muduo::net::TcpServer server(&m_eventLoop,address,"RpcProvider");
+    muduo_server_ = std::make_shared<muduo::net::TcpServer> (&m_eventLoop,address,"RpcProvider");
     //绑定连接回调和读写回调方法,分离网络和业务代码
-    server.setConnectionCallback(std::bind(&RpcProvider::OnConnection,this,std::placeholders::_1));
-    server.setMessageCallback(std::bind(&RpcProvider::OnMessage,this,std::placeholders::_1,
+    muduo_server_->setConnectionCallback(std::bind(&RpcProvider::OnConnection,this,std::placeholders::_1));
+    muduo_server_->setMessageCallback(std::bind(&RpcProvider::OnMessage,this,std::placeholders::_1,
         std::placeholders::_2,std::placeholders::_3));
     //设置muduo库线程数量
-    server.setThreadNum(4);
-
-
+    muduo_server_->setThreadNum(4);
     std::cout<<"rpcprovider start service at ip:"<<ip<<"port"<<port<<std::endl;
     //启动服务
-    server.start();
+    muduo_server_->start();
     m_eventLoop.loop();
 }   
 

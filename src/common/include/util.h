@@ -1,11 +1,20 @@
 #pragma once
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/serialization/access.hpp>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <unistd.h>
+
+#include <sstream>
 #include <mutex>
 #include <condition_variable>
 #include <random>
-#include "config.h" 
 #include <functional>
 #include <queue>
+#include <thread>
 
+#include "config.h" 
 // template<class T>
 // class DeferClass {
 // public:
@@ -90,8 +99,41 @@ public:
     std::string value_;
     std::string client_id_;//客户端id
     int request_id_;//客户端id请求的request序列号
+public:
+    std::string asString() const {
+        std::stringstream ss;
+        boost::archive::text_oarchive oa(ss);
 
+        // write class instance to archive
+        oa << *this;
+        // close archive
+
+        return ss.str();
+    }
+
+    bool parseFromString(std::string str) {
+        std::stringstream iss(str);
+        boost::archive::text_iarchive ia(iss);
+        // read class state from archive
+        ia >> *this;
+        return true;  
+    }
 private:
-
-
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version) {
+        ar& operation_;
+        ar& key_;
+        ar& value_;
+        ar& client_id_;
+        ar& request_id_;
+    }
 };
+
+const std::string OK = "OK";
+const std::string ErrNoKey = "ErrNoKey";
+const std::string ErrWrongLeader = "ErrWrongLeader";
+
+bool isReleasePort(unsigned short usPort);
+
+bool getReleasePort(short& port);

@@ -101,12 +101,20 @@ void Raft::appendEntries(const raftRpcProtoc::AppendEntriesRequest *request,raft
 //定期向状态机写入日志
 void Raft::applyTicker()
 {
-
+    while(true){
+        std::unique_lock<std::mutex> lock(mtx_);
+        auto apply_msgs=getApplyLogs();
+        lock.unlock();
+        for(auto& message:apply_msgs){
+            apply_chan_->push(message);
+        }
+        sleepNMilliseconds(ApplyInterval);
+    }
 }
 //拍摄快照
 bool Raft::candInstallSnapshot(int last_include_term,int last_include_index,std::string snapshot)
 {
-
+    return true;
 }
 //发起选举
 void Raft::doElection()
@@ -236,12 +244,30 @@ void Raft::electionTimeoutTicker()
 //获取日志
 std::vector<ApplyMsg> Raft::getApplyLogs()
 {
-
+    std::vector<ApplyMsg> apply_msgs;
+    if(commit_index_ > getLastLogIndex()){
+        exit(EXIT_FAILURE);
+    }
+    while(last_appiled_<commit_index_){
+        last_appiled_++;
+        if(logs_[getSlicesIndexFromLogIndex(last_appiled_)].logindex() != last_appiled_){
+            exit(EXIT_FAILURE);
+        }
+        ApplyMsg apply_msg;
+        apply_msg.command_vaild_=true;
+        apply_msg.snapshot_vaild_=false;
+        apply_msg.command_=logs_[getSlicesIndexFromLogIndex(last_appiled_)].command();
+        apply_msg.command_index_=last_appiled_;
+        apply_msgs.emplace_back(apply_msg);
+        return apply_msgs;
+    }
+    
 }
-//获取新命令的index
+//获取新命令应该分配的Index
 int Raft::getNewCommandIndex()
 {
-
+    auto last_log_index=getLastLogIndex();
+    return last_log_index+1;
 }
 //获取节点i当前日志信息
 void Raft::getPrevLogInfo(int i,int* preindex,int* preterm)
@@ -258,12 +284,15 @@ void Raft::getPrevLogInfo(int i,int* preindex,int* preterm)
 //检查当前节点是否是leader
 void Raft::getState(int* term,bool* isLeader)
 {
-
+    std::lock_guard<std::mutex> lock(mtx_);
+    *term = current_term_;
+    *isLeader=(status_==Leader);
 }
 //安装快照
 void Raft::installSnapshot(const raftRpcProtoc::InstallSnapshotRequest *request, 
     raftRpcProtoc::InstallSnapshotResponse* response)
 {
+
 
 }
 //检查是否该发送心跳，如果是则执行doHeartbeat()
@@ -299,7 +328,32 @@ void Raft::leaderHeartbeatTicker()
 //leader节点发送快照
 void Raft::leaderSendSnapshot(int server)
 {
+    std::unique_lock<std::mutex> lock(mtx_);
+    raftRpcProtoc::InstallSnapshotRequest request;
+    request.set_leaderid(me_);
+    request.set_term(current_term_);
+    request.set_lastincludedindex(last_snapshot_include_index_);
+    request.set_lastincludedterm(last_snapshot_include_term_);
+    request.set_data(persister_->readSnapshot());
+    lock.unlock();
 
+    raftRpcProtoc::InstallSnapshotResponse response;
+    bool ok=peers_[server]->InstallSnapshot(&request,&response);
+    lock.lock();
+    if(!ok)return;
+    if(status_!=Leader || current_term_ != request.term()){
+        return ;
+    }
+    if(response.term() > current_term_){
+        current_term_=response.term();
+        votedfor_=-1;
+        status_=Follower;
+        persist();
+        last_rest_election_time_=now();
+        return;
+    }
+    match_index_[server] = request.lastincludedindex();
+    next_index_[server] = match_index_[server]+1;
 }
 //leader更新commitIndex
 void Raft::leaderUpdateCommitIndex()
@@ -441,7 +495,7 @@ int Raft::getLogTermFromLogIndex(int log_index)
 }
 int Raft::getRaftStateSize()
 {
-
+    return persister_->raftStateSize();
 }
 //把日志索引(逻辑索引)转换为日志数组下标,就是相对快照的下标
 int Raft::getSlicesIndexFromLogIndex(int log_index)
@@ -559,14 +613,31 @@ bool Raft::sendAppendEntries(int i,std::shared_ptr<raftRpcProtoc::AppendEntriesR
 //给上层kvserver发送消息
 void Raft::pushMsgToKvServer(ApplyMsg msg)
 {
-
+    apply_chan_->push(msg);
 }
-//读取持久化数据
+//读取被持久化的节点
 void Raft::readPersist(std::string data)
 {
-
+    if(data.empty()){
+        return ;
+    }
+    std::stringstream iss(data);
+    boost::archive::text_iarchive ia(iss);
+    BoostPersistRaftNode boostPersistRaftNode;
+    ia >> boostPersistRaftNode;
+    current_term_ = boostPersistRaftNode.current_term_;
+    votedfor_ = boostPersistRaftNode.voted_for_;
+    last_snapshot_include_index_ = boostPersistRaftNode.last_snapshot_include_index_;
+    last_snapshot_include_term_ = boostPersistRaftNode.last_snapshot_include_term_;
+    logs_.clear();
+    for(auto& item:boostPersistRaftNode.logs_){
+        raftRpcProtoc::LogEntry log_entry;
+        //log先通过protobuffer序列化，再通过boost序列化持久化
+        log_entry.ParseFromString(item);
+        logs_.emplace_back(log_entry);
+    }
 }
-//持久化数据
+//持久化数据,返回序列化后的节点state
 std::string Raft::persistData()
 {
     BoostPersistRaftNode boostPersistRaftNode;
@@ -575,6 +646,7 @@ std::string Raft::persistData()
     boostPersistRaftNode.last_snapshot_include_index_=last_snapshot_include_index_;
     boostPersistRaftNode.last_snapshot_include_term_=last_snapshot_include_term_;
     for(auto& item:logs_){
+        //将log结构体通过protoc序列化为st，再通过boost序列化持久化
         boostPersistRaftNode.logs_.push_back(item.SerializeAsString());
     }
     std::stringstream ss;
@@ -582,14 +654,54 @@ std::string Raft::persistData()
     oa << boostPersistRaftNode;
     return ss.str();
 }
-//更新快照
+//将index之后的log保存为快照
 void Raft::snapshot(int index,std::string snapshot)
 {
+    std::lock_guard<std::mutex> lock(mtx_);
+    if(last_snapshot_include_index_ >= index || index>commit_index_){
+        return;
+    }
+    auto last_log_index = getLastLogIndex();
+    int new_last_snapshot_include_index = index;
+    int new_last_snapshot_include_term = logs_[getSlicesIndexFromLogIndex(index)].logterm();
+    std::vector<raftRpcProtoc::LogEntry> trunckedLogs;
 
+    for(int i=index+1;i<=getLastLogIndex();i++){
+        trunckedLogs.emplace_back(logs_[getSlicesIndexFromLogIndex(i)]);
+    }
+    last_snapshot_include_index_=new_last_snapshot_include_index;
+    last_snapshot_include_term_ = new_last_snapshot_include_term;
+    logs_=trunckedLogs;
+    commit_index_=std::max(commit_index_,index);
+    last_appiled_=std::max(last_appiled_,index);
+
+    persister_->save(persistData(),snapshot);
+    if(logs_.size() + last_snapshot_include_index_ != last_log_index){
+        exit(EXIT_FAILURE);  
+    }
 }
 //启动
 void Raft::start(Op command,int* new_log_index,int* new_log_term,bool* is_leader){
+    std::lock_guard<std::mutex> lock(mtx_);
+    if(status_ != Leader){
+        *new_log_index=-1;
+        *new_log_term=-1;
+        *is_leader = false;
+        return;
+    }
+    // leader应该不停的向各个Follower发送AE来维护心跳和保持日志同步，
+    // 目前的做法是新的命令来了不会直接执行，而是等待leader的心跳触发
+    raftRpcProtoc::LogEntry new_log_entry;
+    new_log_entry.set_command(command.asString());
+    new_log_entry.set_logterm(current_term_);
+    new_log_entry.set_logindex(getNewCommandIndex());
+    logs_.emplace_back(new_log_entry);
 
+    int last_log_index=getLastLogIndex();
+    persist();
+    *new_log_index=new_log_entry.logindex();
+    *new_log_term=new_log_entry.logterm();
+    *is_leader=true;
 }
 //初始化
 void Raft::init(std::vector<std::shared_ptr<RaftRpcUtil>> peers, 
