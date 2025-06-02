@@ -63,7 +63,8 @@ private:
     int max_raft_state_;
     std::string serialized_KVData_;
     SkipList<std::string,std::string> skiplist_;
-    std::unordered_map<std::string,std::string> kvDB_;
+    // std::unordered_map<std::string,std::string> kvDB_;
+    //每个raft的op保存为一个lockqueue
     std::unordered_map<int,LockQueue<Op>*> wait_applychan_;
     //记录每个client最新的请求的id
     std::unordered_map<std::string,int> last_request_id_;

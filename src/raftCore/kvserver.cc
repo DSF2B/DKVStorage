@@ -99,7 +99,7 @@ void KvServer::executeGetOpOnKVDB(Op op, std::string *value, bool *exist){
     last_request_id_[op.client_id_]=op.request_id_;
     lock.unlock();
 }
-//本地方法
+//本地方法,处理来自client的get rpc，从
 void KvServer::get(const raftKVRpcProtoc::GetRequest *request,
     raftKVRpcProtoc::GetResponse *response){
     Op op;
@@ -119,11 +119,12 @@ void KvServer::get(const raftKVRpcProtoc::GetRequest *request,
         return;
     }
 }
+//server向众raft节点增加数据
 void KvServer::putAppend(const raftKVRpcProtoc::PutAppendRequest *request,
     raftKVRpcProtoc::PutAppendResponse *response){
 
 }
-
+//raft通过applymsg管道传递message，server向状态机传递command
 void KvServer::getCommandFromRaft(ApplyMsg message){
     Op op;
     //解析
@@ -140,11 +141,12 @@ void KvServer::getCommandFromRaft(ApplyMsg message){
             executeAppendOpOnKVDB(op);
         }
     }
+    //server也是raft，处理快照问题
     if(max_raft_state_ !=-1){
-
+        //如果raft的log太大（大于指定的比例）就制作快照
+        ifNeedToSendSnapShotCommand(message.command_index_,9);
     }
-
-
+    sendMessageToWaitChan(op,message.command_index_);
 }
 //检查是否是重复的请求
 bool KvServer::ifRequestDuplicate(std::string client_id, int request_id){
@@ -157,17 +159,43 @@ bool KvServer::ifRequestDuplicate(std::string client_id, int request_id){
 }
 //一直等待raft传来的applyCh
 void KvServer::readRaftApplyCommandLoop(){
-
+    while(true){
+        //如果只操作applyChan不用拿锁，因为applyChan自己带锁
+        auto message = apply_chan_->pop();
+        if(message.command_vaild_){
+            getCommandFromRaft(message);
+        }
+        if(message.snapshot_vaild_){
+            getSnapShotFromRaft(message);
+        }
+    }
 }
-void KvServer::readSnapShotToInstall(std::string snapshot){
 
+
+void KvServer::readSnapShotToInstall(std::string snapshot){
+    if(snapshot.empty()){
+        return ;   
+    }
+    //从快照中还原出server状态
+    parseFromString(snapshot);
 }
 bool KvServer::sendMessageToWaitChan(const Op &op, int raft_index){
-
+    std::lock_guard<std::mutex> lock(mtx_);
+    if(wait_applychan_.find(raft_index) == wait_applychan_.end()){
+        return false;
+    }
+    wait_applychan_[raft_index]->push(op);
+    return true;
 }
-// 检查是否需要制作快照，需要的话就向raft之下制作快照
+// 检查是否需要制作快照，需要的话就向raft制作快照
 void KvServer::ifNeedToSendSnapShotCommand(int raft_index, int proportion){
-
+    if(raft_node_->getRaftStateSize() > max_raft_state_ /10.0){
+        //大于0.1最大statesize
+        //制作快照
+        auto snapshot = makeSnapShot();
+        //去掉index之前的log
+        raft_node_->snapshot(raft_index,snapshot);
+    }
 }
 // Handler the SnapShot from kv.rf.applyCh
 void KvServer::getSnapShotFromRaft(ApplyMsg message){
@@ -179,7 +207,7 @@ void KvServer::getSnapShotFromRaft(ApplyMsg message){
 }
 std::string KvServer::makeSnapShot(){
     std::lock_guard<std::mutex> lock(mtx_);
-    std::string snapshot_data = getSnapshotData();
+    std::string snapshot_data = getSnapshotData();//snapshot序列化
     return snapshot_data;
 }
 

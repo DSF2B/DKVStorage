@@ -292,8 +292,48 @@ void Raft::getState(int* term,bool* isLeader)
 void Raft::installSnapshot(const raftRpcProtoc::InstallSnapshotRequest *request, 
     raftRpcProtoc::InstallSnapshotResponse* response)
 {
+    std::lock_guard<std::mutex> lock(mtx_);
+    if(request->term() < current_term_){
+        response->set_term(current_term_);
+        return ;
+    }
+    if(request->term() > current_term_){
+        current_term_ =request->term();
+        votedfor_=-1;
+        status_=Follower;
+        persist();
+    }
+    status_=Follower;
+    last_rest_election_time_=now();
+    if(request->lastincludedindex() <= last_snapshot_include_index_){
+        return ;
+    }
+    //截断日志
+    auto last_log_index=getLastLogIndex();
+    if(last_log_index > request->lastincludedindex()){
+        //现有日志比要排成快照的多，logs中去掉排成快照的部分
+        logs_.erase(logs_.begin(),logs_.begin()+getSlicesIndexFromLogIndex(request->lastincludedindex())+1);
+    }
+    else{
+        //现有日志比要排成快照的少，全部排成快照
+        logs_.clear();
+    }
+    commit_index_=std::max(commit_index_,request->lastincludedindex());
+    last_appiled_=std::max(last_appiled_,request->lastincludedindex());
+    last_snapshot_include_index_ = request->lastincludedindex();
+    last_snapshot_include_term_=request->lastincludedterm();
 
+    response->set_term(current_term_);
+    ApplyMsg msg;
+    msg.command_vaild_=true;
+    msg.snapshot_=request->data();
+    msg.snapshot_term_=request->lastincludedterm();
+    msg.snapshot_index_=request->lastincludedindex();
 
+    std::thread t(&Raft::pushMsgToKvServer,this,msg);
+    t.detach();
+
+    persister_->save(persistData(),request->data());
 }
 //检查是否该发送心跳，如果是则执行doHeartbeat()
 void Raft::leaderHeartbeatTicker()
@@ -358,7 +398,25 @@ void Raft::leaderSendSnapshot(int server)
 //leader更新commitIndex
 void Raft::leaderUpdateCommitIndex()
 {
-
+    commit_index_ = last_snapshot_include_index_;
+    for(int index=getLastLogIndex();index>=last_snapshot_include_index_+1;index--){
+        int sum=0;
+        for(int i=0;i<peers_.size();i++){
+            if(i==me_){
+                sum++;
+                continue;
+            }
+            if(match_index_[i] >= index){
+                //节点i的index是匹配的
+                sum++;
+            }
+        }
+        if(sum>=peers_.size()/2+1 && getLogTermFromLogIndex(index) == current_term_){
+            //超过一般匹配且是当前term的
+            commit_index_=index;
+            break;//从后面循环，找到就退出
+        }
+    }
 }
 //判断对象index日志是否匹配
 bool Raft::matchLog(int log_index,int log_term)
@@ -654,7 +712,7 @@ std::string Raft::persistData()
     oa << boostPersistRaftNode;
     return ss.str();
 }
-//将index之后的log保存为快照
+//将index之前的log去掉
 void Raft::snapshot(int index,std::string snapshot)
 {
     std::lock_guard<std::mutex> lock(mtx_);
@@ -677,7 +735,7 @@ void Raft::snapshot(int index,std::string snapshot)
 
     persister_->save(persistData(),snapshot);
     if(logs_.size() + last_snapshot_include_index_ != last_log_index){
-        exit(EXIT_FAILURE);  
+        exit(EXIT_FAILURE);
     }
 }
 //启动
