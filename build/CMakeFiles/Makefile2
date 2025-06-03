@@ -84,15 +84,35 @@ clean: example/clean
 
 # Recursive "all" directory target.
 example/all: example/skipListExample/all
+example/all: example/raftExample/all
 .PHONY : example/all
 
 # Recursive "preinstall" directory target.
 example/preinstall: example/skipListExample/preinstall
+example/preinstall: example/raftExample/preinstall
 .PHONY : example/preinstall
 
 # Recursive "clean" directory target.
 example/clean: example/skipListExample/clean
+example/clean: example/raftExample/clean
 .PHONY : example/clean
+
+#=============================================================================
+# Directory level rules for directory example/raftExample
+
+# Recursive "all" directory target.
+example/raftExample/all: example/raftExample/CMakeFiles/testRaftServer.dir/all
+example/raftExample/all: example/raftExample/CMakeFiles/testRaftClient.dir/all
+.PHONY : example/raftExample/all
+
+# Recursive "preinstall" directory target.
+example/raftExample/preinstall:
+.PHONY : example/raftExample/preinstall
+
+# Recursive "clean" directory target.
+example/raftExample/clean: example/raftExample/CMakeFiles/testRaftServer.dir/clean
+example/raftExample/clean: example/raftExample/CMakeFiles/testRaftClient.dir/clean
+.PHONY : example/raftExample/clean
 
 #=============================================================================
 # Directory level rules for directory example/skipListExample
@@ -289,7 +309,7 @@ example/skipListExample/CMakeFiles/testSkipList.dir/all: CMakeFiles/skip_list_on
 example/skipListExample/CMakeFiles/testSkipList.dir/all: src/rpc/CMakeFiles/rpc_lib.dir/all
 	$(MAKE) $(MAKESILENT) -f example/skipListExample/CMakeFiles/testSkipList.dir/build.make example/skipListExample/CMakeFiles/testSkipList.dir/depend
 	$(MAKE) $(MAKESILENT) -f example/skipListExample/CMakeFiles/testSkipList.dir/build.make example/skipListExample/CMakeFiles/testSkipList.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=27,28 "Built target testSkipList"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=34,35 "Built target testSkipList"
 .PHONY : example/skipListExample/CMakeFiles/testSkipList.dir/all
 
 # Build rule for subdir invocation for target.
@@ -307,6 +327,60 @@ testSkipList: example/skipListExample/CMakeFiles/testSkipList.dir/rule
 example/skipListExample/CMakeFiles/testSkipList.dir/clean:
 	$(MAKE) $(MAKESILENT) -f example/skipListExample/CMakeFiles/testSkipList.dir/build.make example/skipListExample/CMakeFiles/testSkipList.dir/clean
 .PHONY : example/skipListExample/CMakeFiles/testSkipList.dir/clean
+
+#=============================================================================
+# Target rules for target example/raftExample/CMakeFiles/testRaftServer.dir
+
+# All Build rule for target.
+example/raftExample/CMakeFiles/testRaftServer.dir/all: CMakeFiles/skip_list_on_raft.dir/all
+example/raftExample/CMakeFiles/testRaftServer.dir/all: src/rpc/CMakeFiles/rpc_lib.dir/all
+	$(MAKE) $(MAKESILENT) -f example/raftExample/CMakeFiles/testRaftServer.dir/build.make example/raftExample/CMakeFiles/testRaftServer.dir/depend
+	$(MAKE) $(MAKESILENT) -f example/raftExample/CMakeFiles/testRaftServer.dir/build.make example/raftExample/CMakeFiles/testRaftServer.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=32,33 "Built target testRaftServer"
+.PHONY : example/raftExample/CMakeFiles/testRaftServer.dir/all
+
+# Build rule for subdir invocation for target.
+example/raftExample/CMakeFiles/testRaftServer.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/zilu/桌面/DKVStorage/build/CMakeFiles 28
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 example/raftExample/CMakeFiles/testRaftServer.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/zilu/桌面/DKVStorage/build/CMakeFiles 0
+.PHONY : example/raftExample/CMakeFiles/testRaftServer.dir/rule
+
+# Convenience name for target.
+testRaftServer: example/raftExample/CMakeFiles/testRaftServer.dir/rule
+.PHONY : testRaftServer
+
+# clean rule for target.
+example/raftExample/CMakeFiles/testRaftServer.dir/clean:
+	$(MAKE) $(MAKESILENT) -f example/raftExample/CMakeFiles/testRaftServer.dir/build.make example/raftExample/CMakeFiles/testRaftServer.dir/clean
+.PHONY : example/raftExample/CMakeFiles/testRaftServer.dir/clean
+
+#=============================================================================
+# Target rules for target example/raftExample/CMakeFiles/testRaftClient.dir
+
+# All Build rule for target.
+example/raftExample/CMakeFiles/testRaftClient.dir/all: CMakeFiles/skip_list_on_raft.dir/all
+example/raftExample/CMakeFiles/testRaftClient.dir/all: src/rpc/CMakeFiles/rpc_lib.dir/all
+	$(MAKE) $(MAKESILENT) -f example/raftExample/CMakeFiles/testRaftClient.dir/build.make example/raftExample/CMakeFiles/testRaftClient.dir/depend
+	$(MAKE) $(MAKESILENT) -f example/raftExample/CMakeFiles/testRaftClient.dir/build.make example/raftExample/CMakeFiles/testRaftClient.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=27,28,29,30,31 "Built target testRaftClient"
+.PHONY : example/raftExample/CMakeFiles/testRaftClient.dir/all
+
+# Build rule for subdir invocation for target.
+example/raftExample/CMakeFiles/testRaftClient.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/zilu/桌面/DKVStorage/build/CMakeFiles 31
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 example/raftExample/CMakeFiles/testRaftClient.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/zilu/桌面/DKVStorage/build/CMakeFiles 0
+.PHONY : example/raftExample/CMakeFiles/testRaftClient.dir/rule
+
+# Convenience name for target.
+testRaftClient: example/raftExample/CMakeFiles/testRaftClient.dir/rule
+.PHONY : testRaftClient
+
+# clean rule for target.
+example/raftExample/CMakeFiles/testRaftClient.dir/clean:
+	$(MAKE) $(MAKESILENT) -f example/raftExample/CMakeFiles/testRaftClient.dir/build.make example/raftExample/CMakeFiles/testRaftClient.dir/clean
+.PHONY : example/raftExample/CMakeFiles/testRaftClient.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

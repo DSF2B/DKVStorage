@@ -1,1 +1,3 @@
 add_subdirectory(skipListExample)
+
+add_subdirectory(raftExample)

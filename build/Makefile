@@ -155,6 +155,32 @@ testSkipList/fast:
 	$(MAKE) $(MAKESILENT) -f example/skipListExample/CMakeFiles/testSkipList.dir/build.make example/skipListExample/CMakeFiles/testSkipList.dir/build
 .PHONY : testSkipList/fast
 
+#=============================================================================
+# Target rules for targets named testRaftServer
+
+# Build rule for target.
+testRaftServer: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 testRaftServer
+.PHONY : testRaftServer
+
+# fast build rule for target.
+testRaftServer/fast:
+	$(MAKE) $(MAKESILENT) -f example/raftExample/CMakeFiles/testRaftServer.dir/build.make example/raftExample/CMakeFiles/testRaftServer.dir/build
+.PHONY : testRaftServer/fast
+
+#=============================================================================
+# Target rules for targets named testRaftClient
+
+# Build rule for target.
+testRaftClient: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 testRaftClient
+.PHONY : testRaftClient
+
+# fast build rule for target.
+testRaftClient/fast:
+	$(MAKE) $(MAKESILENT) -f example/raftExample/CMakeFiles/testRaftClient.dir/build.make example/raftExample/CMakeFiles/testRaftClient.dir/build
+.PHONY : testRaftClient/fast
+
 src/common/util.o: src/common/util.cc.o
 .PHONY : src/common/util.o
 
@@ -549,6 +575,8 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... rpc_lib"
 	@echo "... skip_list_on_raft"
+	@echo "... testRaftClient"
+	@echo "... testRaftServer"
 	@echo "... testSkipList"
 	@echo "... src/common/util.o"
 	@echo "... src/common/util.i"

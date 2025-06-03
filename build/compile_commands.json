@@ -123,5 +123,30 @@
   "directory": "/home/zilu/桌面/DKVStorage/build/example/skipListExample",
   "command": "/usr/bin/g++  -I/home/zilu/桌面/DKVStorage/src/common/include -I/home/zilu/桌面/DKVStorage/src/raftClient/include -I/home/zilu/桌面/DKVStorage/src/raftCore/include -I/home/zilu/桌面/DKVStorage/src/raftRpc/include -I/home/zilu/桌面/DKVStorage/src/rpc/include -I/home/zilu/桌面/DKVStorage/src/skipList/include -I/home/zilu/桌面/DKVStorage/example -g -std=gnu++20 -o CMakeFiles/testSkipList.dir/testSkipList.cc.o -c /home/zilu/桌面/DKVStorage/example/skipListExample/testSkipList.cc",
   "file": "/home/zilu/桌面/DKVStorage/example/skipListExample/testSkipList.cc"
+},
+{
+  "directory": "/home/zilu/桌面/DKVStorage/build/example/raftExample",
+  "command": "/usr/bin/g++  -I/home/zilu/桌面/DKVStorage/src/common/include -I/home/zilu/桌面/DKVStorage/src/raftClient/include -I/home/zilu/桌面/DKVStorage/src/raftCore/include -I/home/zilu/桌面/DKVStorage/src/raftRpc/include -I/home/zilu/桌面/DKVStorage/src/rpc/include -I/home/zilu/桌面/DKVStorage/src/skipList/include -I/home/zilu/桌面/DKVStorage/example -g -std=gnu++20 -o CMakeFiles/testRaftServer.dir/testraftserver.cc.o -c /home/zilu/桌面/DKVStorage/example/raftExample/testraftserver.cc",
+  "file": "/home/zilu/桌面/DKVStorage/example/raftExample/testraftserver.cc"
+},
+{
+  "directory": "/home/zilu/桌面/DKVStorage/build/example/raftExample",
+  "command": "/usr/bin/g++  -I/home/zilu/桌面/DKVStorage/src/common/include -I/home/zilu/桌面/DKVStorage/src/raftClient/include -I/home/zilu/桌面/DKVStorage/src/raftCore/include -I/home/zilu/桌面/DKVStorage/src/raftRpc/include -I/home/zilu/桌面/DKVStorage/src/rpc/include -I/home/zilu/桌面/DKVStorage/src/skipList/include -I/home/zilu/桌面/DKVStorage/example -g -std=gnu++20 -o CMakeFiles/testRaftClient.dir/testraftclient.cc.o -c /home/zilu/桌面/DKVStorage/example/raftExample/testraftclient.cc",
+  "file": "/home/zilu/桌面/DKVStorage/example/raftExample/testraftclient.cc"
+},
+{
+  "directory": "/home/zilu/桌面/DKVStorage/build/example/raftExample",
+  "command": "/usr/bin/g++  -I/home/zilu/桌面/DKVStorage/src/common/include -I/home/zilu/桌面/DKVStorage/src/raftClient/include -I/home/zilu/桌面/DKVStorage/src/raftCore/include -I/home/zilu/桌面/DKVStorage/src/raftRpc/include -I/home/zilu/桌面/DKVStorage/src/rpc/include -I/home/zilu/桌面/DKVStorage/src/skipList/include -I/home/zilu/桌面/DKVStorage/example -g -std=gnu++20 -o CMakeFiles/testRaftClient.dir/__/__/src/common/util.cc.o -c /home/zilu/桌面/DKVStorage/src/common/util.cc",
+  "file": "/home/zilu/桌面/DKVStorage/src/common/util.cc"
+},
+{
+  "directory": "/home/zilu/桌面/DKVStorage/build/example/raftExample",
+  "command": "/usr/bin/g++  -I/home/zilu/桌面/DKVStorage/src/common/include -I/home/zilu/桌面/DKVStorage/src/raftClient/include -I/home/zilu/桌面/DKVStorage/src/raftCore/include -I/home/zilu/桌面/DKVStorage/src/raftRpc/include -I/home/zilu/桌面/DKVStorage/src/rpc/include -I/home/zilu/桌面/DKVStorage/src/skipList/include -I/home/zilu/桌面/DKVStorage/example -g -std=gnu++20 -o CMakeFiles/testRaftClient.dir/__/__/src/raftClient/raftclient.cc.o -c /home/zilu/桌面/DKVStorage/src/raftClient/raftclient.cc",
+  "file": "/home/zilu/桌面/DKVStorage/src/raftClient/raftclient.cc"
+},
+{
+  "directory": "/home/zilu/桌面/DKVStorage/build/example/raftExample",
+  "command": "/usr/bin/g++  -I/home/zilu/桌面/DKVStorage/src/common/include -I/home/zilu/桌面/DKVStorage/src/raftClient/include -I/home/zilu/桌面/DKVStorage/src/raftCore/include -I/home/zilu/桌面/DKVStorage/src/raftRpc/include -I/home/zilu/桌面/DKVStorage/src/rpc/include -I/home/zilu/桌面/DKVStorage/src/skipList/include -I/home/zilu/桌面/DKVStorage/example -g -std=gnu++20 -o CMakeFiles/testRaftClient.dir/__/__/src/raftClient/raftserverrpcutil.cc.o -c /home/zilu/桌面/DKVStorage/src/raftClient/raftserverrpcutil.cc",
+  "file": "/home/zilu/桌面/DKVStorage/src/raftClient/raftserverrpcutil.cc"
 }
 ]

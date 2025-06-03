@@ -49,8 +49,23 @@ void MprpcChannel::CallMethod(
     // 组织待发送的rpc请求字符串
     //  header_size(4bytes) + head_str(service_name method_name args_size) + args_str指明哪些是服务名和方法名和参数]
     std::string send_rpc_str;
-    send_rpc_str.insert(0, std::string((char*)&header_size, 4));
-    send_rpc_str += rpc_header_str;
+    // send_rpc_str.insert(0, std::string((char*)&header_size, 4));
+    // send_rpc_str += rpc_header_str;
+    
+    
+    // 使用protobuf的CodedOutputStream来构建发送的数据流
+    {
+        // 创建一个StringOutputStream用于写入send_rpc_str
+        google::protobuf::io::StringOutputStream string_output(&send_rpc_str);
+        google::protobuf::io::CodedOutputStream coded_output(&string_output);
+
+        // 先写入header的长度（变长编码）
+        coded_output.WriteVarint32(static_cast<uint32_t>(rpc_header_str.size()));
+
+        // 不需要手动写入header_size，因为上面的WriteVarint32已经包含了header的长度信息
+        // 然后写入rpc_header本身
+        coded_output.WriteString(rpc_header_str);
+    }
     send_rpc_str += args_str;
 
     // 网络通信发送   int socket(int domain, int type, int protocol);
@@ -68,11 +83,9 @@ void MprpcChannel::CallMethod(
     // uint16_t port = atoi(MprpcApplication::GetInstance().GetConfig().Load("rpcserverport").c_str());
     //rpc调用方向zk上查询该服务所在的host信息
 
-    std::string method_path = "/"+service_name+"/"+method_name;
     std::string ip=ip_;
     uint16_t port = port_;
-
-    std::cout<<"find method on ip:"<<ip<<"port"<<port<<std::endl;
+    std::cout<<"try to connect ip:"<<ip<<"port"<<port<<std::endl;
     
     //初始化socket
     struct sockaddr_in server_addr;

@@ -28,7 +28,7 @@ void RpcProvider::NotifyService(google::protobuf::Service *service){
 
 }
 //启动rpc服务节点，开始提供rpc远程调用服务
-void RpcProvider::Run(int nodeIndex, short port){
+void RpcProvider::Run(int nodeIndex, short port,std::string node_info_filename){
     char *ipC;
     char hname[128];
     struct hostent *hent;
@@ -38,10 +38,10 @@ void RpcProvider::Run(int nodeIndex, short port){
         ipC = inet_ntoa(*(struct in_addr *)(hent->h_addr_list[i]));  // IP地址
     }
     std::string ip = std::string(ipC);
-    //写入文件 "test.conf"
+
     std::string node = "node" + std::to_string(nodeIndex);
     std::ofstream outfile;
-    outfile.open("test.conf", std::ios::app);  //打开文件并追加写入
+    outfile.open(node_info_filename, std::ios::app);  //打开文件并追加写入
     if (!outfile.is_open()) {
     std::cout << "打开文件失败！" << std::endl;
     exit(EXIT_FAILURE);
@@ -82,20 +82,39 @@ void RpcProvider::OnMessage(const muduo::net::TcpConnectionPtr& conn,
                             muduo::net::Buffer *buff,    
                             muduo::Timestamp){
     std::string recv_buf = buff->retrieveAllAsString();
-    //从字符流中读取前四个字节的内容作为header_size
-    uint32_t header_size  = 0;
-    //拷贝四个字节到header_size;
-    //size_t copy(char* s, size_t len, size_t pos = 0) const;
-    //其中，s 是目标字符数组，len 是要复制的字符数，pos 是开始复制的位置。该函数返回实际复制的字符数
-    recv_buf.copy((char*)&header_size,4,0);
-    // std::string header_str = recv_buf.substr(0, 4);
-    // std::memcpy(&header_size, header_str.data(), 4);
-    //获取header的原始字符流，然后反序列化得到具体header
-    std::string rpc_header_str = recv_buf.substr(4,header_size);
+    // //从字符流中读取前四个字节的内容作为header_size
+    // uint32_t header_size  = 0;
+    // //拷贝四个字节到header_size;
+    // //size_t copy(char* s, size_t len, size_t pos = 0) const;
+    // //其中，s 是目标字符数组，len 是要复制的字符数，pos 是开始复制的位置。该函数返回实际复制的字符数
+    // recv_buf.copy((char*)&header_size,4,0);
+    // // std::string header_str = recv_buf.substr(0, 4);
+    // // std::memcpy(&header_size, header_str.data(), 4);
+    // //获取header的原始字符流，然后反序列化得到具体header
+    // std::string rpc_header_str = recv_buf.substr(4,header_size);
+    // mprpc::RpcHeader rpcheader;
+    // std::string service_name;
+    // std::string method_name;
+    // uint32_t args_size;
+
+    // 使用protobuf的CodedInputStream来解析数据流
+    google::protobuf::io::ArrayInputStream array_input(recv_buf.data(), recv_buf.size());
+    google::protobuf::io::CodedInputStream coded_input(&array_input);
+    uint32_t header_size{};
+
+    coded_input.ReadVarint32(&header_size);  // 解析header_size
+    // 根据header_size读取数据头的原始字符流，反序列化数据，得到rpc请求的详细信息
+    std::string rpc_header_str;
     mprpc::RpcHeader rpcheader;
     std::string service_name;
     std::string method_name;
-    uint32_t args_size;
+    // 设置读取限制，不必担心数据读多
+    google::protobuf::io::CodedInputStream::Limit msg_limit = coded_input.PushLimit(header_size);
+    coded_input.ReadString(&rpc_header_str, header_size);
+    // 恢复之前的限制，以便安全地继续读取其他数据
+    coded_input.PopLimit(msg_limit);
+    int args_size{};
+
     if(rpcheader.ParseFromString(rpc_header_str)){
         service_name = rpcheader.service_name();
         method_name = rpcheader.method_name();
@@ -107,6 +126,14 @@ void RpcProvider::OnMessage(const muduo::net::TcpConnectionPtr& conn,
     }
 
     std::string args_str = recv_buf.substr(4+header_size, args_size);
+    
+      // 直接读取args_size长度的字符串数据
+    bool read_args_success = coded_input.ReadString(&args_str, args_size);
+    if (!read_args_success) {
+    // 处理错误：参数数据读取失败
+        return;
+    }
+
     auto it=m_serviceMap.find(service_name);
     if(it == m_serviceMap.end()){
         std::cout<<service_name<<" is not exist"<<std::endl;

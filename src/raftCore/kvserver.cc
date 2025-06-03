@@ -10,17 +10,17 @@ KvServer::KvServer(int me,int max_raft_state,std::string node_info_filename,shor
     apply_chan_=std::make_shared<LockQueue<ApplyMsg>>();
     raft_node_ = std::make_shared<Raft> ();
     //注册rpc服务，既与raft节点通信，又要接受client远程调用
-    std::thread t([this,port]{
+    std::thread t([this,port,node_info_filename]{
         RpcProvider provider;
         provider.NotifyService(this);//server
         provider.NotifyService(raft_node_.get());//raft
-        provider.Run(me_,port);
+        provider.Run(me_,port,node_info_filename.c_str());
     });
     t.detach();
 
     //开启rpc远程调用服务，要保证所有raft节点都开启rpc接受功能后才能开启rpc远程调用功能
     //睡眠等待其他节点
-    std::cout << "raftServer node:" << me_ << " start to sleep to wait all ohter raftnode start!!!!" << std::endl;
+    std::cout << "raftServer node:" << me_ << " start to sleep to wait all other raftnode start!!!!" << std::endl;
     sleep(6);
     std::cout << "raftServer node:" << me_ << " wake up!!!! start to connect other raftnode" << std::endl;
     MprpcConfig config;
@@ -46,7 +46,8 @@ KvServer::KvServer(int me,int max_raft_state,std::string node_info_filename,shor
         std::string other_node_ip=ip_port_vt[i].first;
         short other_node_port = ip_port_vt[i].second;
         auto* rpc = new RaftRpcUtil(other_node_ip,other_node_port);
-        servers.push_back(std::make_shared<RaftRpcUtil>(rpc));
+        servers.push_back(std::shared_ptr<RaftRpcUtil>(rpc));
+        // servers.push_back(std::make_shared<RaftRpcUtil>(other_node_ip,other_node_port));
         std::cout << "node" << me_ << " 连接node" << i << "success!" << std::endl;
     }
     //其他节点启动后再启动server

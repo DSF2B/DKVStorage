@@ -24,7 +24,7 @@ public:
     //应当可以接受任意的Service(包括派生类UserServiceRpc等)，通知需要调用的服务
     void NotifyService(google::protobuf::Service *service);
     //启动rpc服务节点，开始提供rpc远程调用服务
-    void Run(int nodeIndex, short port);
+    void Run(int nodeIndex, short port,std::string node_info_filename);
 private:
     muduo::net::EventLoop m_eventLoop;
     std::shared_ptr<muduo::net::TcpServer> muduo_server_;
