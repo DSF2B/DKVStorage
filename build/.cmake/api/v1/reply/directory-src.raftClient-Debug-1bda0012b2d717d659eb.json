@@ -8,7 +8,7 @@
 	"installers" : [],
 	"paths" : 
 	{
-		"build" : "src/raftClerk",
-		"source" : "src/raftClerk"
+		"build" : "src/raftClient",
+		"source" : "src/raftClient"
 	}
 }

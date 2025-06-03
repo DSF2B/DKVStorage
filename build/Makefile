@@ -155,29 +155,125 @@ testSkipList/fast:
 	$(MAKE) $(MAKESILENT) -f example/skipListExample/CMakeFiles/testSkipList.dir/build.make example/skipListExample/CMakeFiles/testSkipList.dir/build
 .PHONY : testSkipList/fast
 
-src/raftCore/persist.o: src/raftCore/persist.cc.o
-.PHONY : src/raftCore/persist.o
+src/common/util.o: src/common/util.cc.o
+.PHONY : src/common/util.o
 
 # target to build an object file
-src/raftCore/persist.cc.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/raftCore/persist.cc.o
-.PHONY : src/raftCore/persist.cc.o
+src/common/util.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/common/util.cc.o
+.PHONY : src/common/util.cc.o
 
-src/raftCore/persist.i: src/raftCore/persist.cc.i
-.PHONY : src/raftCore/persist.i
+src/common/util.i: src/common/util.cc.i
+.PHONY : src/common/util.i
 
 # target to preprocess a source file
-src/raftCore/persist.cc.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/raftCore/persist.cc.i
-.PHONY : src/raftCore/persist.cc.i
+src/common/util.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/common/util.cc.i
+.PHONY : src/common/util.cc.i
 
-src/raftCore/persist.s: src/raftCore/persist.cc.s
-.PHONY : src/raftCore/persist.s
+src/common/util.s: src/common/util.cc.s
+.PHONY : src/common/util.s
 
 # target to generate assembly for a file
-src/raftCore/persist.cc.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/raftCore/persist.cc.s
-.PHONY : src/raftCore/persist.cc.s
+src/common/util.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/common/util.cc.s
+.PHONY : src/common/util.cc.s
+
+src/raftClient/raftclient.o: src/raftClient/raftclient.cc.o
+.PHONY : src/raftClient/raftclient.o
+
+# target to build an object file
+src/raftClient/raftclient.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftclient.cc.o
+.PHONY : src/raftClient/raftclient.cc.o
+
+src/raftClient/raftclient.i: src/raftClient/raftclient.cc.i
+.PHONY : src/raftClient/raftclient.i
+
+# target to preprocess a source file
+src/raftClient/raftclient.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftclient.cc.i
+.PHONY : src/raftClient/raftclient.cc.i
+
+src/raftClient/raftclient.s: src/raftClient/raftclient.cc.s
+.PHONY : src/raftClient/raftclient.s
+
+# target to generate assembly for a file
+src/raftClient/raftclient.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftclient.cc.s
+.PHONY : src/raftClient/raftclient.cc.s
+
+src/raftClient/raftserverrpcutil.o: src/raftClient/raftserverrpcutil.cc.o
+.PHONY : src/raftClient/raftserverrpcutil.o
+
+# target to build an object file
+src/raftClient/raftserverrpcutil.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftserverrpcutil.cc.o
+.PHONY : src/raftClient/raftserverrpcutil.cc.o
+
+src/raftClient/raftserverrpcutil.i: src/raftClient/raftserverrpcutil.cc.i
+.PHONY : src/raftClient/raftserverrpcutil.i
+
+# target to preprocess a source file
+src/raftClient/raftserverrpcutil.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftserverrpcutil.cc.i
+.PHONY : src/raftClient/raftserverrpcutil.cc.i
+
+src/raftClient/raftserverrpcutil.s: src/raftClient/raftserverrpcutil.cc.s
+.PHONY : src/raftClient/raftserverrpcutil.s
+
+# target to generate assembly for a file
+src/raftClient/raftserverrpcutil.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftserverrpcutil.cc.s
+.PHONY : src/raftClient/raftserverrpcutil.cc.s
+
+src/raftCore/kvserver.o: src/raftCore/kvserver.cc.o
+.PHONY : src/raftCore/kvserver.o
+
+# target to build an object file
+src/raftCore/kvserver.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/raftCore/kvserver.cc.o
+.PHONY : src/raftCore/kvserver.cc.o
+
+src/raftCore/kvserver.i: src/raftCore/kvserver.cc.i
+.PHONY : src/raftCore/kvserver.i
+
+# target to preprocess a source file
+src/raftCore/kvserver.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/raftCore/kvserver.cc.i
+.PHONY : src/raftCore/kvserver.cc.i
+
+src/raftCore/kvserver.s: src/raftCore/kvserver.cc.s
+.PHONY : src/raftCore/kvserver.s
+
+# target to generate assembly for a file
+src/raftCore/kvserver.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/raftCore/kvserver.cc.s
+.PHONY : src/raftCore/kvserver.cc.s
+
+src/raftCore/persister.o: src/raftCore/persister.cc.o
+.PHONY : src/raftCore/persister.o
+
+# target to build an object file
+src/raftCore/persister.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/raftCore/persister.cc.o
+.PHONY : src/raftCore/persister.cc.o
+
+src/raftCore/persister.i: src/raftCore/persister.cc.i
+.PHONY : src/raftCore/persister.i
+
+# target to preprocess a source file
+src/raftCore/persister.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/raftCore/persister.cc.i
+.PHONY : src/raftCore/persister.cc.i
+
+src/raftCore/persister.s: src/raftCore/persister.cc.s
+.PHONY : src/raftCore/persister.s
+
+# target to generate assembly for a file
+src/raftCore/persister.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/raftCore/persister.cc.s
+.PHONY : src/raftCore/persister.cc.s
 
 src/raftCore/raft.o: src/raftCore/raft.cc.o
 .PHONY : src/raftCore/raft.o
@@ -226,6 +322,54 @@ src/raftCore/raftrpcutil.s: src/raftCore/raftrpcutil.cc.s
 src/raftCore/raftrpcutil.cc.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/raftCore/raftrpcutil.cc.s
 .PHONY : src/raftCore/raftrpcutil.cc.s
+
+src/raftRpc/kvserverrpc.pb.o: src/raftRpc/kvserverrpc.pb.cc.o
+.PHONY : src/raftRpc/kvserverrpc.pb.o
+
+# target to build an object file
+src/raftRpc/kvserverrpc.pb.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/raftRpc/kvserverrpc.pb.cc.o
+.PHONY : src/raftRpc/kvserverrpc.pb.cc.o
+
+src/raftRpc/kvserverrpc.pb.i: src/raftRpc/kvserverrpc.pb.cc.i
+.PHONY : src/raftRpc/kvserverrpc.pb.i
+
+# target to preprocess a source file
+src/raftRpc/kvserverrpc.pb.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/raftRpc/kvserverrpc.pb.cc.i
+.PHONY : src/raftRpc/kvserverrpc.pb.cc.i
+
+src/raftRpc/kvserverrpc.pb.s: src/raftRpc/kvserverrpc.pb.cc.s
+.PHONY : src/raftRpc/kvserverrpc.pb.s
+
+# target to generate assembly for a file
+src/raftRpc/kvserverrpc.pb.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/raftRpc/kvserverrpc.pb.cc.s
+.PHONY : src/raftRpc/kvserverrpc.pb.cc.s
+
+src/raftRpc/raftrpc.pb.o: src/raftRpc/raftrpc.pb.cc.o
+.PHONY : src/raftRpc/raftrpc.pb.o
+
+# target to build an object file
+src/raftRpc/raftrpc.pb.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/raftRpc/raftrpc.pb.cc.o
+.PHONY : src/raftRpc/raftrpc.pb.cc.o
+
+src/raftRpc/raftrpc.pb.i: src/raftRpc/raftrpc.pb.cc.i
+.PHONY : src/raftRpc/raftrpc.pb.i
+
+# target to preprocess a source file
+src/raftRpc/raftrpc.pb.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/raftRpc/raftrpc.pb.cc.i
+.PHONY : src/raftRpc/raftrpc.pb.cc.i
+
+src/raftRpc/raftrpc.pb.s: src/raftRpc/raftrpc.pb.cc.s
+.PHONY : src/raftRpc/raftrpc.pb.s
+
+# target to generate assembly for a file
+src/raftRpc/raftrpc.pb.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/raftRpc/raftrpc.pb.cc.s
+.PHONY : src/raftRpc/raftrpc.pb.cc.s
 
 src/rpc/logger.o: src/rpc/logger.cc.o
 .PHONY : src/rpc/logger.o
@@ -406,15 +550,33 @@ help:
 	@echo "... rpc_lib"
 	@echo "... skip_list_on_raft"
 	@echo "... testSkipList"
-	@echo "... src/raftCore/persist.o"
-	@echo "... src/raftCore/persist.i"
-	@echo "... src/raftCore/persist.s"
+	@echo "... src/common/util.o"
+	@echo "... src/common/util.i"
+	@echo "... src/common/util.s"
+	@echo "... src/raftClient/raftclient.o"
+	@echo "... src/raftClient/raftclient.i"
+	@echo "... src/raftClient/raftclient.s"
+	@echo "... src/raftClient/raftserverrpcutil.o"
+	@echo "... src/raftClient/raftserverrpcutil.i"
+	@echo "... src/raftClient/raftserverrpcutil.s"
+	@echo "... src/raftCore/kvserver.o"
+	@echo "... src/raftCore/kvserver.i"
+	@echo "... src/raftCore/kvserver.s"
+	@echo "... src/raftCore/persister.o"
+	@echo "... src/raftCore/persister.i"
+	@echo "... src/raftCore/persister.s"
 	@echo "... src/raftCore/raft.o"
 	@echo "... src/raftCore/raft.i"
 	@echo "... src/raftCore/raft.s"
 	@echo "... src/raftCore/raftrpcutil.o"
 	@echo "... src/raftCore/raftrpcutil.i"
 	@echo "... src/raftCore/raftrpcutil.s"
+	@echo "... src/raftRpc/kvserverrpc.pb.o"
+	@echo "... src/raftRpc/kvserverrpc.pb.i"
+	@echo "... src/raftRpc/kvserverrpc.pb.s"
+	@echo "... src/raftRpc/raftrpc.pb.o"
+	@echo "... src/raftRpc/raftrpc.pb.i"
+	@echo "... src/raftRpc/raftrpc.pb.s"
 	@echo "... src/rpc/logger.o"
 	@echo "... src/rpc/logger.i"
 	@echo "... src/rpc/logger.s"

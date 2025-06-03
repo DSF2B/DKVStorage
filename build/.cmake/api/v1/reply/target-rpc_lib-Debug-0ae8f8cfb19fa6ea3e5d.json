@@ -3,7 +3,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "libskip_list_on_raft.a"
+			"path" : "src/rpc/librpc_lib.a"
 		}
 	],
 	"backtrace" : 1,
@@ -16,6 +16,7 @@
 		],
 		"files" : 
 		[
+			"src/rpc/CMakeLists.txt",
 			"CMakeLists.txt"
 		],
 		"nodes" : 
@@ -26,50 +27,53 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 27,
+				"line" : 5,
 				"parent" : 0
 			},
 			{
+				"file" : 1
+			},
+			{
 				"command" : 1,
-				"file" : 0,
+				"file" : 1,
 				"line" : 13,
-				"parent" : 0
+				"parent" : 2
 			},
 			{
 				"command" : 1,
-				"file" : 0,
+				"file" : 1,
 				"line" : 14,
-				"parent" : 0
+				"parent" : 2
 			},
 			{
 				"command" : 1,
-				"file" : 0,
+				"file" : 1,
 				"line" : 15,
-				"parent" : 0
+				"parent" : 2
 			},
 			{
 				"command" : 1,
-				"file" : 0,
+				"file" : 1,
 				"line" : 16,
-				"parent" : 0
+				"parent" : 2
 			},
 			{
 				"command" : 1,
-				"file" : 0,
+				"file" : 1,
 				"line" : 17,
-				"parent" : 0
+				"parent" : 2
 			},
 			{
 				"command" : 1,
-				"file" : 0,
+				"file" : 1,
 				"line" : 18,
-				"parent" : 0
+				"parent" : 2
 			},
 			{
 				"command" : 1,
-				"file" : 0,
+				"file" : 1,
 				"line" : 19,
-				"parent" : 0
+				"parent" : 2
 			}
 		]
 	},
@@ -88,31 +92,31 @@
 			"includes" : 
 			[
 				{
-					"backtrace" : 2,
+					"backtrace" : 3,
 					"path" : "/home/zilu/\u684c\u9762/DKVStorage/src/common/include"
 				},
 				{
-					"backtrace" : 3,
-					"path" : "/home/zilu/\u684c\u9762/DKVStorage/src/raftClerk/include"
-				},
-				{
 					"backtrace" : 4,
-					"path" : "/home/zilu/\u684c\u9762/DKVStorage/src/raftCore/include"
+					"path" : "/home/zilu/\u684c\u9762/DKVStorage/src/raftClient/include"
 				},
 				{
 					"backtrace" : 5,
-					"path" : "/home/zilu/\u684c\u9762/DKVStorage/src/raftRpc/include"
+					"path" : "/home/zilu/\u684c\u9762/DKVStorage/src/raftCore/include"
 				},
 				{
 					"backtrace" : 6,
-					"path" : "/home/zilu/\u684c\u9762/DKVStorage/src/rpc/include"
+					"path" : "/home/zilu/\u684c\u9762/DKVStorage/src/raftRpc/include"
 				},
 				{
 					"backtrace" : 7,
-					"path" : "/home/zilu/\u684c\u9762/DKVStorage/src/skipList/include"
+					"path" : "/home/zilu/\u684c\u9762/DKVStorage/src/rpc/include"
 				},
 				{
 					"backtrace" : 8,
+					"path" : "/home/zilu/\u684c\u9762/DKVStorage/src/skipList/include"
+				},
+				{
+					"backtrace" : 9,
 					"path" : "/home/zilu/\u684c\u9762/DKVStorage/example"
 				}
 			],
@@ -134,20 +138,17 @@
 				4,
 				5,
 				6,
-				7,
-				8,
-				9,
-				10
+				7
 			]
 		}
 	],
-	"id" : "skip_list_on_raft::@6890427a1f51a3e7e1df",
-	"name" : "skip_list_on_raft",
-	"nameOnDisk" : "libskip_list_on_raft.a",
+	"id" : "rpc_lib::@c0b061266edb2b3621b8",
+	"name" : "rpc_lib",
+	"nameOnDisk" : "librpc_lib.a",
 	"paths" : 
 	{
-		"build" : ".",
-		"source" : "."
+		"build" : "src/rpc",
+		"source" : "src/rpc"
 	},
 	"sourceGroups" : 
 	[
@@ -162,10 +163,7 @@
 				4,
 				5,
 				6,
-				7,
-				8,
-				9,
-				10
+				7
 			]
 		}
 	],
@@ -216,25 +214,7 @@
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
-			"path" : "src/raftCore/kvserver.cc",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "src/raftCore/persister.cc",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "src/raftCore/raft.cc",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "src/raftCore/raftrpcutil.cc",
+			"path" : "src/common/util.cc",
 			"sourceGroupIndex" : 0
 		}
 	],

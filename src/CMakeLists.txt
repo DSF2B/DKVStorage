@@ -8,4 +8,4 @@ add_subdirectory(raftRpc)
 
 add_subdirectory(raftCore)
 
-add_subdirectory(raftClerk)
+add_subdirectory(raftClient)

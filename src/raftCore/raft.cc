@@ -98,7 +98,7 @@ void Raft::appendEntries(const raftRpcProtoc::AppendEntriesRequest *request,raft
     }
 
 }
-//定期向状态机写入日志
+//定期告知server层完成同步commit的日志
 void Raft::applyTicker()
 {
     while(true){
@@ -241,7 +241,7 @@ void Raft::electionTimeoutTicker()
         }
     }
 }
-//获取日志
+//获取完成同步的日志，即上次apply和当前已经commit之间的日志
 std::vector<ApplyMsg> Raft::getApplyLogs()
 {
     std::vector<ApplyMsg> apply_msgs;
@@ -288,7 +288,7 @@ void Raft::getState(int* term,bool* isLeader)
     *term = current_term_;
     *isLeader=(status_==Leader);
 }
-//安装快照
+//安装其他节点传来的快照
 void Raft::installSnapshot(const raftRpcProtoc::InstallSnapshotRequest *request, 
     raftRpcProtoc::InstallSnapshotResponse* response)
 {
@@ -311,11 +311,11 @@ void Raft::installSnapshot(const raftRpcProtoc::InstallSnapshotRequest *request,
     //截断日志
     auto last_log_index=getLastLogIndex();
     if(last_log_index > request->lastincludedindex()){
-        //现有日志比要排成快照的多，logs中去掉排成快照的部分
+        //现有日志比要传来的快照的多，logs中去掉传来的快照的部分
         logs_.erase(logs_.begin(),logs_.begin()+getSlicesIndexFromLogIndex(request->lastincludedindex())+1);
     }
     else{
-        //现有日志比要排成快照的少，全部排成快照
+        //现有日志比要传来的快照的少，就全部删掉
         logs_.clear();
     }
     commit_index_=std::max(commit_index_,request->lastincludedindex());
@@ -432,7 +432,7 @@ bool Raft::matchLog(int log_index,int log_term)
 void Raft::persist()
 {   
     auto data = persistData();
-    persister_->saveRaftState(data);
+    persister_->saveRaftState(data);//落盘数据
 }
 
 //响应投票请求，重写rpc函数，由candidate远程调用该函数为其投票
@@ -673,7 +673,7 @@ void Raft::pushMsgToKvServer(ApplyMsg msg)
 {
     apply_chan_->push(msg);
 }
-//读取被持久化的节点
+//加载读取被持久化的节点
 void Raft::readPersist(std::string data)
 {
     if(data.empty()){
@@ -738,7 +738,7 @@ void Raft::snapshot(int index,std::string snapshot)
         exit(EXIT_FAILURE);
     }
 }
-//启动
+//执行一个command
 void Raft::start(Op command,int* new_log_index,int* new_log_term,bool* is_leader){
     std::lock_guard<std::mutex> lock(mtx_);
     if(status_ != Leader){

@@ -103,15 +103,15 @@
 					"source" : "src/raftCore"
 				},
 				{
-					"build" : "src/raftClerk",
-					"jsonFile" : "directory-src.raftClerk-Debug-b49e9cb2a637d2f05e12.json",
+					"build" : "src/raftClient",
+					"jsonFile" : "directory-src.raftClient-Debug-1bda0012b2d717d659eb.json",
 					"minimumCMakeVersion" : 
 					{
 						"string" : "3.0"
 					},
 					"parentIndex" : 1,
 					"projectIndex" : 0,
-					"source" : "src/raftClerk"
+					"source" : "src/raftClient"
 				},
 				{
 					"build" : "example",
@@ -175,21 +175,21 @@
 				{
 					"directoryIndex" : 4,
 					"id" : "rpc_lib::@c0b061266edb2b3621b8",
-					"jsonFile" : "target-rpc_lib-Debug-63ebe055d594be14f22b.json",
+					"jsonFile" : "target-rpc_lib-Debug-0ae8f8cfb19fa6ea3e5d.json",
 					"name" : "rpc_lib",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "skip_list_on_raft::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-skip_list_on_raft-Debug-036595830caef8b97de4.json",
+					"jsonFile" : "target-skip_list_on_raft-Debug-9af32403b677f7f3c26e.json",
 					"name" : "skip_list_on_raft",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 9,
 					"id" : "testSkipList::@e5ee243a459d05b1d6b1",
-					"jsonFile" : "target-testSkipList-Debug-741cb1abebe47eaabc61.json",
+					"jsonFile" : "target-testSkipList-Debug-47b27d72c9ee555fe23a.json",
 					"name" : "testSkipList",
 					"projectIndex" : 0
 				}

@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/g++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/zilu/桌面/DKVStorage/src/common/include -I/home/zilu/桌面/DKVStorage/src/raftClerk/include -I/home/zilu/桌面/DKVStorage/src/raftCore/include -I/home/zilu/桌面/DKVStorage/src/raftRpc/include -I/home/zilu/桌面/DKVStorage/src/rpc/include -I/home/zilu/桌面/DKVStorage/src/skipList/include -I/home/zilu/桌面/DKVStorage/example
+CXX_INCLUDES = -I/home/zilu/桌面/DKVStorage/src/common/include -I/home/zilu/桌面/DKVStorage/src/raftClient/include -I/home/zilu/桌面/DKVStorage/src/raftCore/include -I/home/zilu/桌面/DKVStorage/src/raftRpc/include -I/home/zilu/桌面/DKVStorage/src/rpc/include -I/home/zilu/桌面/DKVStorage/src/skipList/include -I/home/zilu/桌面/DKVStorage/example
 
 CXX_FLAGS = -g -std=gnu++20
 

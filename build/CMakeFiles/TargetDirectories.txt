@@ -14,8 +14,8 @@
 /home/zilu/桌面/DKVStorage/build/src/raftRpc/CMakeFiles/rebuild_cache.dir
 /home/zilu/桌面/DKVStorage/build/src/raftCore/CMakeFiles/edit_cache.dir
 /home/zilu/桌面/DKVStorage/build/src/raftCore/CMakeFiles/rebuild_cache.dir
-/home/zilu/桌面/DKVStorage/build/src/raftClerk/CMakeFiles/edit_cache.dir
-/home/zilu/桌面/DKVStorage/build/src/raftClerk/CMakeFiles/rebuild_cache.dir
+/home/zilu/桌面/DKVStorage/build/src/raftClient/CMakeFiles/edit_cache.dir
+/home/zilu/桌面/DKVStorage/build/src/raftClient/CMakeFiles/rebuild_cache.dir
 /home/zilu/桌面/DKVStorage/build/example/CMakeFiles/edit_cache.dir
 /home/zilu/桌面/DKVStorage/build/example/CMakeFiles/rebuild_cache.dir
 /home/zilu/桌面/DKVStorage/build/example/skipListExample/CMakeFiles/testSkipList.dir

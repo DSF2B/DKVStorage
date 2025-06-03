@@ -61,7 +61,7 @@ KvServer::KvServer(int me,int max_raft_state,std::string node_info_filename,shor
     if (!snapshot.empty()) {
         readSnapShotToInstall(snapshot);
     }
-    //向其他节点宣告自己就是leader
+    //新线程负责与raft节点通信，接收apply_chan
     std::thread t2(&KvServer::readRaftApplyCommandLoop, this);
     t2.join();//由於ReadRaftApplyCommandLoop一直不會結束，达到一直卡在这的目的
 }
@@ -87,7 +87,6 @@ void KvServer::executeAppendOpOnKVDB(Op op){
     last_request_id_[op.client_id_] = op.request_id_;
     lock.unlock();
     dprintfKVDB();
-
 }
 void KvServer::executeGetOpOnKVDB(Op op, std::string *value, bool *exist){
     std::unique_lock<std::mutex> lock(mtx_);
@@ -109,22 +108,120 @@ void KvServer::get(const raftKVRpcProtoc::GetRequest *request,
     op.client_id_=request->clientid();
     op.request_id_=request->requestid();
 
-    int raft_index=-1;
+    int raft_log_index=-1;//raftIndex是日志条目的索引，用于标识该请求的Raft日志条目。
     int _=-1;
     bool is_leader=-1;
-    raft_node_->start(op,&raft_index,&_,&is_leader);
+    //先把op传到raft进行同步，再由raft进行commit,添加到wait
+    raft_node_->start(op,&raft_log_index,&_,&is_leader);//将op（Get操作）提交到Raft日志中
 
     if(!is_leader){
         response->set_err(ErrWrongLeader);
         return;
     }
+    //创建等待Raft日志提交的通道（Channel
+    std::unique_lock<std::mutex> lock(mtx_);
+    if(wait_applychan_.find(raft_log_index) == wait_applychan_.end()){
+        wait_applychan_.insert(std::make_pair(raft_log_index,new LockQueue<Op>()));
+    }
+    auto ch_for_raft_index = wait_applychan_[raft_log_index];//当前节点的lockqueue<Op>
+    lock.unlock();//解锁，允许raft向ch_for_raft_index中放入数据
+    //如果ch_for_raft_index里有数据后就弹出到raft_commit_op
+    Op raft_commit_op;
+
+    if(!ch_for_raft_index->timeoutPop(CONSENSUS_TIMEOUT,&raft_commit_op)){
+        //生产者消费者，如果超时前没在raft_commit_op中拿到数据
+        int _=-1;
+        bool is_leader = false;
+        raft_node_->getState(&_,&is_leader);
+        if(ifRequestDuplicate(op.client_id_,op.request_id_) && is_leader){
+            //如果超时，代表raft集群不保证已经commitIndex该日志，但是如果是已经提交过的get请求，是可以再执行的，终究会同步，可以重复get
+            std::string value;
+            bool exist=false;
+            executeGetOpOnKVDB(op,&value,&exist);
+            if(exist){
+                response->set_err(OK);
+                response->set_value(value);
+            }else{
+                response->set_err(ErrNoKey);
+                response->set_value("");
+            }
+        }else{
+            //该节点不是leader,换其他节点
+            response->set_err(ErrWrongLeader);
+        }
+    }else{
+        if(raft_commit_op.client_id_==op.client_id_ &&
+        raft_commit_op.request_id_==op.request_id_){
+            //传递到raft返回的command和原来的command是一个，表示该command是所有raft节点同步过的
+            //raft已经提交了该command（op），raft内部节点已经一致，可以从db中执行get了
+            std::string value;
+            bool exist = false;
+            executeGetOpOnKVDB(op, &value, &exist);
+            if (exist) {
+                response->set_err(OK);
+                response->set_value(value);
+            } else {
+                response->set_err(ErrNoKey);
+                response->set_value("");
+            }
+        }
+    }
+    //释放raftIndex的等待队列，删除该队列并解锁
+    lock.lock();
+    auto tmp=wait_applychan_[raft_log_index];
+    wait_applychan_.erase(raft_log_index);
+    delete tmp;
+    lock.unlock();   
 }
 //server向众raft节点增加数据
 void KvServer::putAppend(const raftKVRpcProtoc::PutAppendRequest *request,
     raftKVRpcProtoc::PutAppendResponse *response){
+    Op op;
+    op.operation_ = request->op();
+    op.key_ = request->key();
+    op.value_ = request->value();
+    op.client_id_ = request->clientid();
+    op.request_id_ = request->requestid();
 
+    int raft_log_index = -1;
+    int _ = -1;
+    bool isleader = false;
+
+    raft_node_->start(op, &raft_log_index, &_, &isleader);
+    if(!isleader){
+        response->set_err(ErrWrongLeader);
+        return;
+    }
+    std::unique_lock<std::mutex> lock(mtx_);
+    if (wait_applychan_.find(raft_log_index) == wait_applychan_.end()) {
+    wait_applychan_.insert(std::make_pair(raft_log_index, new LockQueue<Op>()));
+    }
+    auto chForRaftIndex = wait_applychan_[raft_log_index];
+    lock.unlock();  //直接解锁，等待任务执行完成，不能一直拿锁等待
+
+    Op raftCommitOp;
+    if(!chForRaftIndex->timeoutPop(CONSENSUS_TIMEOUT, &raftCommitOp)) {
+        if(ifRequestDuplicate(op.client_id_, op.request_id_)) {
+            response->set_err(OK);
+        }else{
+            response->set_err(ErrWrongLeader);
+        }
+    }else{
+        if (raftCommitOp.client_id_ == op.client_id_ && raftCommitOp.request_id_ == op.request_id_) {
+            //这里与get不同，在getCommandFromRaft执行了executePutOpOnKVDB,检查成功就行，即wait_chan里和op里一致
+            response->set_err(OK);
+        }else{
+            response->set_err(ErrWrongLeader);
+        }
+    }
+
+    lock.lock();
+    auto tmp = wait_applychan_[raft_log_index];
+    wait_applychan_.erase(raft_log_index);
+    delete tmp;
+    lock.unlock();
 }
-//raft通过applymsg管道传递message，server向状态机传递command
+//raft同步message后，通过applymsg管道向server层提交message，server完成写入db,并将op添加到wait_applychan_
 void KvServer::getCommandFromRaft(ApplyMsg message){
     Op op;
     //解析
@@ -132,7 +229,7 @@ void KvServer::getCommandFromRaft(ApplyMsg message){
     if(message.command_index_ < last_snapshot_raftlog_index_){
         return ;
     }
-    //command是否重复
+    //command是否重复,put和append不能重复
     if(!ifRequestDuplicate(op.client_id_,op.request_id_)){
         if(op.operation_=="Put"){
             executePutOpOnKVDB(op);
@@ -171,7 +268,6 @@ void KvServer::readRaftApplyCommandLoop(){
     }
 }
 
-
 void KvServer::readSnapShotToInstall(std::string snapshot){
     if(snapshot.empty()){
         return ;   
@@ -179,6 +275,7 @@ void KvServer::readSnapShotToInstall(std::string snapshot){
     //从快照中还原出server状态
     parseFromString(snapshot);
 }
+//向wait_applychan_生产raft的op响应
 bool KvServer::sendMessageToWaitChan(const Op &op, int raft_index){
     std::lock_guard<std::mutex> lock(mtx_);
     if(wait_applychan_.find(raft_index) == wait_applychan_.end()){

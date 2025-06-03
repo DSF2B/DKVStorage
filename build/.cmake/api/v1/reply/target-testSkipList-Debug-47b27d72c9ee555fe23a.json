@@ -110,7 +110,7 @@
 				},
 				{
 					"backtrace" : 6,
-					"path" : "/home/zilu/\u684c\u9762/DKVStorage/src/raftClerk/include"
+					"path" : "/home/zilu/\u684c\u9762/DKVStorage/src/raftClient/include"
 				},
 				{
 					"backtrace" : 7,
@@ -183,12 +183,12 @@
 			},
 			{
 				"backtrace" : 4,
-				"fragment" : "libskip_list_on_raft.a",
+				"fragment" : "../../libskip_list_on_raft.a",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 4,
-				"fragment" : "src/rpc/librpc_lib.a",
+				"fragment" : "../../src/rpc/librpc_lib.a",
 				"role" : "libraries"
 			},
 			{

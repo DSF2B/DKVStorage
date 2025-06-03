@@ -1,4 +1,4 @@
-# Install script for directory: /home/zilu/桌面/DKVStorage/src
+# Install script for directory: /home/zilu/桌面/DKVStorage/src/raftClient
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -40,16 +40,5 @@ endif()
 # Set default install directory permissions.
 if(NOT DEFINED CMAKE_OBJDUMP)
   set(CMAKE_OBJDUMP "/usr/bin/objdump")
-endif()
-
-if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for each subdirectory.
-  include("/home/zilu/桌面/DKVStorage/build/src/skipList/cmake_install.cmake")
-  include("/home/zilu/桌面/DKVStorage/build/src/common/cmake_install.cmake")
-  include("/home/zilu/桌面/DKVStorage/build/src/rpc/cmake_install.cmake")
-  include("/home/zilu/桌面/DKVStorage/build/src/raftRpc/cmake_install.cmake")
-  include("/home/zilu/桌面/DKVStorage/build/src/raftCore/cmake_install.cmake")
-  include("/home/zilu/桌面/DKVStorage/build/src/raftClient/cmake_install.cmake")
-
 endif()
 
