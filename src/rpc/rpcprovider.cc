@@ -52,7 +52,7 @@ void RpcProvider::Run(int nodeIndex, short port,std::string node_info_filename){
 
     muduo::net::InetAddress address(ip,port);
     //创建Tcpserver
-    muduo_server_ = std::make_shared<muduo::net::TcpServer> (&m_eventLoop,address,"RpcProvider");
+    muduo_server_ = std::make_shared<muduo::net::TcpServer> (&event_loop_,address,"RpcProvider");
     //绑定连接回调和读写回调方法,分离网络和业务代码
     muduo_server_->setConnectionCallback(std::bind(&RpcProvider::OnConnection,this,std::placeholders::_1));
     muduo_server_->setMessageCallback(std::bind(&RpcProvider::OnMessage,this,std::placeholders::_1,
@@ -62,7 +62,7 @@ void RpcProvider::Run(int nodeIndex, short port,std::string node_info_filename){
     std::cout<<"rpcprovider start service at ip:"<<ip<<"port"<<port<<std::endl;
     //启动服务
     muduo_server_->start();
-    m_eventLoop.loop();
+    event_loop_.loop();
 }   
 
 void RpcProvider::OnConnection(const muduo::net::TcpConnectionPtr &conn){
@@ -190,4 +190,9 @@ void RpcProvider::SendRpcResponse(const muduo::net::TcpConnectionPtr& conn, goog
         std::cout<<"Serialize response_str error!"<<std::endl;
     }
     conn->shutdown();
+}
+RpcProvider::~RpcProvider() {
+    std::cout << "[func - RpcProvider::~RpcProvider()]: ip和port信息：" << muduo_server_->ipPort() << std::endl;
+    event_loop_.quit();
+    //    m_muduo_server.   怎么没有stop函数，奇奇怪怪，看csdn上面的教程也没有要停止，甚至上面那个都没有
 }

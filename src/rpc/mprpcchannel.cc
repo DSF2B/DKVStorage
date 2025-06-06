@@ -68,60 +68,49 @@ void MprpcChannel::CallMethod(
     }
     send_rpc_str += args_str;
 
-    // 网络通信发送   int socket(int domain, int type, int protocol);
-    int clientfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (clientfd == -1)
-    {
-        // std::cout << "create socket error,errno:" << errno << std::endl;
-        char errtext[512] = {0};
-        sprintf(errtext,"create socket error,errno:%d",errno);
-        controller->SetFailed(errtext);
-        return ;
-    }
-    //读取配置文件中的rpcserver信息
-    // std::string ip = MprpcApplication::GetInstance().GetConfig().Load("rpcserverip");
-    // uint16_t port = atoi(MprpcApplication::GetInstance().GetConfig().Load("rpcserverport").c_str());
-    //rpc调用方向zk上查询该服务所在的host信息
+
+
 
     std::string ip=ip_;
     uint16_t port = port_;
     std::cout<<"try to connect ip:"<<ip<<"port"<<port<<std::endl;
-    
-    //初始化socket
-    struct sockaddr_in server_addr;
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(port);
-    server_addr.sin_addr.s_addr = inet_addr(ip.c_str());
-
-    if (connect(clientfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1)
-    {
-        // std::cout << "connect error!errno:" << errno << std::endl;
-        char errtext[512] = {0};
-        sprintf(errtext,"connect error!errno:%d",errno);
-        controller->SetFailed(errtext);
-        close(clientfd);
-        return ;
+    if(client_fd_==-1){
+        std::string errMsg;
+        bool rt=newConnect(ip.c_str(),port,&errMsg);
+        if(!rt){
+            controller->SetFailed(errMsg);
+            return;
+        }
     }
-    // 发送rpc请求
-    if (send(clientfd, send_rpc_str.c_str(), send_rpc_str.size(), 0) == -1)
+    
+    
+
+    //失败会重试连接再发送，重试连接失败会直接return
+    while(send(client_fd_, send_rpc_str.c_str(), send_rpc_str.size(), 0) == -1)
     {
         // std::cout << "send error!errno:" << errno << std::endl;
         char errtext[512] = {0};
         sprintf(errtext,"send error!errno:%d",errno);
         controller->SetFailed(errtext);
-        close(clientfd);
-        return;
+        close(client_fd_);
+        client_fd_=-1;
+        std::string errMsg;
+        bool rt=newConnect(ip.c_str(),port,&errMsg);
+        if(!rt){
+            controller->SetFailed(errMsg);
+            return;
+        }
     }
     // 接受rpcg响应
     char recv_buf[1024] = {0};
     int recv_size = 0;
-    if ((recv_size = recv(clientfd, recv_buf, 1024, 0)) == -1)
+    if ((recv_size = recv(client_fd_, recv_buf, 1024, 0)) == -1)
     {
         // std::cout << "recv error!errno:" << errno << std::endl;
         char errtext[512] = {0};
         sprintf(errtext,"recv error!errno:%d",errno);
         controller->SetFailed(errtext);
-        close(clientfd);
+        close(client_fd_);
         return;
     }
     // 将响应写入response
@@ -134,10 +123,41 @@ void MprpcChannel::CallMethod(
         char errtext[2048] = {0};
         sprintf(errtext,"parse error! response_str:%s",recv_buf);
         controller->SetFailed(errtext);
-        close(clientfd);
+        close(client_fd_);
         return;
     }
-    close(clientfd);
+    close(client_fd_);
+}
+
+bool MprpcChannel::newConnect(const char* ip,uint16_t port, std::string* errMsg)
+{
+    // 网络通信发送   int socket(int domain, int type, int protocol);
+    int clientfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (clientfd == -1)
+    {
+        // std::cout << "create socket error,errno:" << errno << std::endl;
+        char errtext[512] = {0};
+        sprintf(errtext,"create socket error,errno:%d",errno);
+        client_fd_=-1;
+        *errMsg = errtext;
+        return false;
+    }
+    //初始化socket
+    struct sockaddr_in server_addr;
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(port);
+    server_addr.sin_addr.s_addr = inet_addr(ip);
+    if (connect(clientfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1)
+    {
+        // std::cout << "connect error!errno:" << errno << std::endl;
+        char errtext[512] = {0};
+        sprintf(errtext,"connect error!errno:%d",errno);
+        client_fd_=-1;
+        *errMsg = errtext;
+        return false;
+    }
+    client_fd_=clientfd;
+    return true;
 }
 MprpcChannel::MprpcChannel(std::string ip,uint16_t port):ip_(ip),port_(port){
 }
