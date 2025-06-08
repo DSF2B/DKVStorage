@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "../../../bin/testRaftServer"
-  "../../../bin/testRaftServer.pdb"
+  "/home/zilu/桌面/DKVStorage/bin/testRaftServer"
+  "/home/zilu/桌面/DKVStorage/bin/testRaftServer.pdb"
   "CMakeFiles/testRaftServer.dir/testraftserver.cc.o"
   "CMakeFiles/testRaftServer.dir/testraftserver.cc.o.d"
 )

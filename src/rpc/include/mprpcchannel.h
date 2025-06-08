@@ -15,7 +15,7 @@
 class MprpcChannel:public google::protobuf::RpcChannel
 {
 public:
-    MprpcChannel(std::string ip,uint16_t port);
+    MprpcChannel(std::string ip,uint16_t port, bool connectNow);
     void CallMethod(const google::protobuf::MethodDescriptor* method,
         google::protobuf::RpcController* controller, const google::protobuf::Message* request,
         google::protobuf::Message* response, google::protobuf::Closure* done);

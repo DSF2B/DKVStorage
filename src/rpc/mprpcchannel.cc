@@ -76,6 +76,8 @@ void MprpcChannel::CallMethod(
     std::cout<<"try to connect ip:"<<ip<<"port"<<port<<std::endl;
     if(client_fd_==-1){
         std::string errMsg;
+
+        std::cout<<"connect fail"<<std::endl;
         bool rt=newConnect(ip.c_str(),port,&errMsg);
         if(!rt){
             controller->SetFailed(errMsg);
@@ -88,7 +90,7 @@ void MprpcChannel::CallMethod(
     //失败会重试连接再发送，重试连接失败会直接return
     while(send(client_fd_, send_rpc_str.c_str(), send_rpc_str.size(), 0) == -1)
     {
-        // std::cout << "send error!errno:" << errno << std::endl;
+        std::cout << "send error!errno:" << errno << std::endl;
         char errtext[512] = {0};
         sprintf(errtext,"send error!errno:%d",errno);
         controller->SetFailed(errtext);
@@ -101,18 +103,23 @@ void MprpcChannel::CallMethod(
             return;
         }
     }
+      std::cout<<"request sended"<<std::endl;
+
     // 接受rpcg响应
     char recv_buf[1024] = {0};
     int recv_size = 0;
     if ((recv_size = recv(client_fd_, recv_buf, 1024, 0)) == -1)
     {
-        // std::cout << "recv error!errno:" << errno << std::endl;
+        close(client_fd_);
+        client_fd_=-1;
+        std::cout << "recv error!errno:" << errno << std::endl;
         char errtext[512] = {0};
         sprintf(errtext,"recv error!errno:%d",errno);
         controller->SetFailed(errtext);
-        close(client_fd_);
+        
         return;
     }
+      std::cout<<"response recved"<<std::endl;
     // 将响应写入response
     // std::string response_str(recv_buf, 0, recv_size);//recv_buf遇到\0，后面的数据就无法读取了
     
@@ -123,10 +130,9 @@ void MprpcChannel::CallMethod(
         char errtext[2048] = {0};
         sprintf(errtext,"parse error! response_str:%s",recv_buf);
         controller->SetFailed(errtext);
-        close(client_fd_);
+        // close(client_fd_);
         return;
     }
-    close(client_fd_);
 }
 
 bool MprpcChannel::newConnect(const char* ip,uint16_t port, std::string* errMsg)
@@ -150,6 +156,7 @@ bool MprpcChannel::newConnect(const char* ip,uint16_t port, std::string* errMsg)
     if (connect(clientfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1)
     {
         // std::cout << "connect error!errno:" << errno << std::endl;
+        close(client_fd_);
         char errtext[512] = {0};
         sprintf(errtext,"connect error!errno:%d",errno);
         client_fd_=-1;
@@ -159,5 +166,15 @@ bool MprpcChannel::newConnect(const char* ip,uint16_t port, std::string* errMsg)
     client_fd_=clientfd;
     return true;
 }
-MprpcChannel::MprpcChannel(std::string ip,uint16_t port):ip_(ip),port_(port){
+MprpcChannel::MprpcChannel(std::string ip,uint16_t port,bool connectNow):ip_(ip),port_(port){
+    if (!connectNow) {
+        return;
+    }  //可以允许延迟连接
+    std::string errMsg;
+    auto rt = newConnect(ip.c_str(), port, &errMsg);
+    int tryCount = 3;
+    while (!rt && tryCount--) {
+        std::cout << errMsg << std::endl;
+        rt = newConnect(ip.c_str(), port, &errMsg);
+    }
 }

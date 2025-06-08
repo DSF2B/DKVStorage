@@ -13,7 +13,7 @@ void RpcProvider::NotifyService(google::protobuf::Service *service){
     std::string service_name = pserviceDesc->name();
     //service服务的方法的数量
     int methodCnt=pserviceDesc->method_count();
-    // std::cout<<"service name:"<<service_name<<std::endl;
+    std::cout<<"service name:"<<service_name<<std::endl;
     LOG_INFO("service_name:%s",service_name.c_str());
     for(int i=0;i<methodCnt;i++){
         //获取服务对象的某个方法的描述
@@ -43,8 +43,8 @@ void RpcProvider::Run(int nodeIndex, short port,std::string node_info_filename){
     std::ofstream outfile;
     outfile.open(node_info_filename, std::ios::app);  //打开文件并追加写入
     if (!outfile.is_open()) {
-    std::cout << "打开文件失败！" << std::endl;
-    exit(EXIT_FAILURE);
+        std::cout << "打开文件失败！" << std::endl;
+        exit(EXIT_FAILURE);
     }
     outfile << node + "ip=" + ip << std::endl;
     outfile << node + "port=" + std::to_string(port) << std::endl;
@@ -63,12 +63,15 @@ void RpcProvider::Run(int nodeIndex, short port,std::string node_info_filename){
     //启动服务
     muduo_server_->start();
     event_loop_.loop();
+    std::cout<<"Run over"<<std::endl;
 }   
 
 void RpcProvider::OnConnection(const muduo::net::TcpConnectionPtr &conn){
     if(!conn->connected()){
+        std::cout<<"connect shutdown"<<std::endl;
         conn->shutdown();
     }
+    std::cout<<"connect success"<<std::endl;
 }
 /*
     框架内部RpcProvider和RpceConsumer约定protobuf数据格式
@@ -82,6 +85,7 @@ void RpcProvider::OnMessage(const muduo::net::TcpConnectionPtr& conn,
                             muduo::net::Buffer *buff,    
                             muduo::Timestamp){
     std::string recv_buf = buff->retrieveAllAsString();
+    std::cout<<"request recved"<<std::endl;
     // //从字符流中读取前四个字节的内容作为header_size
     // uint32_t header_size  = 0;
     // //拷贝四个字节到header_size;
@@ -113,7 +117,7 @@ void RpcProvider::OnMessage(const muduo::net::TcpConnectionPtr& conn,
     coded_input.ReadString(&rpc_header_str, header_size);
     // 恢复之前的限制，以便安全地继续读取其他数据
     coded_input.PopLimit(msg_limit);
-    int args_size{};
+    uint32_t args_size{};
 
     if(rpcheader.ParseFromString(rpc_header_str)){
         service_name = rpcheader.service_name();
@@ -189,7 +193,8 @@ void RpcProvider::SendRpcResponse(const muduo::net::TcpConnectionPtr& conn, goog
     }else{
         std::cout<<"Serialize response_str error!"<<std::endl;
     }
-    conn->shutdown();
+    // conn->shutdown();
+    std::cout<<"response send"<<std::endl;
 }
 RpcProvider::~RpcProvider() {
     std::cout << "[func - RpcProvider::~RpcProvider()]: ip和port信息：" << muduo_server_->ipPort() << std::endl;

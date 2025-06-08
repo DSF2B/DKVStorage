@@ -1,0 +1,244 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						8
+					],
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"build" : "src",
+					"childIndexes" : 
+					[
+						2,
+						3,
+						4,
+						5,
+						6,
+						7
+					],
+					"jsonFile" : "directory-src-Debug-b6cf2213fc5053b67c22.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "src"
+				},
+				{
+					"build" : "src/skipList",
+					"jsonFile" : "directory-src.skipList-Debug-68d4c534d62953f07f0b.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 0,
+					"source" : "src/skipList"
+				},
+				{
+					"build" : "src/common",
+					"jsonFile" : "directory-src.common-Debug-26ca1aee19599f655637.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 0,
+					"source" : "src/common"
+				},
+				{
+					"build" : "src/rpc",
+					"jsonFile" : "directory-src.rpc-Debug-7cfaa0b0de104e780152.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 0,
+					"source" : "src/rpc",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"build" : "src/raftRpc",
+					"jsonFile" : "directory-src.raftRpc-Debug-3141c4b16187fd3e8261.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 0,
+					"source" : "src/raftRpc"
+				},
+				{
+					"build" : "src/raftCore",
+					"jsonFile" : "directory-src.raftCore-Debug-5927ccbb43211cac09b5.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 0,
+					"source" : "src/raftCore"
+				},
+				{
+					"build" : "src/raftClient",
+					"jsonFile" : "directory-src.raftClient-Debug-1bda0012b2d717d659eb.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 0,
+					"source" : "src/raftClient"
+				},
+				{
+					"build" : "example",
+					"childIndexes" : 
+					[
+						9,
+						10
+					],
+					"jsonFile" : "directory-example-Debug-b6fca4a6d0a37c6ae6b9.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "example"
+				},
+				{
+					"build" : "example/skipListExample",
+					"jsonFile" : "directory-example.skipListExample-Debug-503e840f5fa737ab32d6.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0"
+					},
+					"parentIndex" : 8,
+					"projectIndex" : 0,
+					"source" : "example/skipListExample",
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"build" : "example/raftExample",
+					"jsonFile" : "directory-example.raftExample-Debug-0ba20dbbefd8584fd879.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0"
+					},
+					"parentIndex" : 8,
+					"projectIndex" : 0,
+					"source" : "example/raftExample",
+					"targetIndexes" : 
+					[
+						2,
+						3
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10
+					],
+					"name" : "DKVStorage",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 4,
+					"id" : "rpc_lib::@c0b061266edb2b3621b8",
+					"jsonFile" : "target-rpc_lib-Debug-0ae8f8cfb19fa6ea3e5d.json",
+					"name" : "rpc_lib",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "skip_list_on_raft::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-skip_list_on_raft-Debug-9af32403b677f7f3c26e.json",
+					"name" : "skip_list_on_raft",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 10,
+					"id" : "testRaftClient::@3a1971a9b4315b7aaf1a",
+					"jsonFile" : "target-testRaftClient-Debug-8c029ee82cdaf679ed86.json",
+					"name" : "testRaftClient",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 10,
+					"id" : "testRaftServer::@3a1971a9b4315b7aaf1a",
+					"jsonFile" : "target-testRaftServer-Debug-144428da9b4d25fcf6f6.json",
+					"name" : "testRaftServer",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 9,
+					"id" : "testSkipList::@e5ee243a459d05b1d6b1",
+					"jsonFile" : "target-testSkipList-Debug-455a1b7c78c59f6a43cb.json",
+					"name" : "testSkipList",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/zilu/\u684c\u9762/DKVStorage/build",
+		"source" : "/home/zilu/\u684c\u9762/DKVStorage"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 4
+	}
+}

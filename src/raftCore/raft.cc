@@ -771,25 +771,33 @@ void Raft::init(std::vector<std::shared_ptr<RaftRpcUtil>> peers,
     me_ = me;
     persister_=persister;
     mtx_.lock();
+
+    apply_chan_=apply_ch;
     current_term_=0;
-    int votedfor_=-1;
-    logs_.clear();
+    status_=Follower;
     commit_index_=0;
     last_appiled_=0;
+    logs_.clear();
     for(int i=0;i<peers.size();i++){
         next_index_.push_back(0);
         match_index_.push_back(0);
     }
-    status_=Follower;
-    apply_chan_=apply_ch;
+    int votedfor_=-1;
+    
+    last_snapshot_include_index_=0;
+    last_snapshot_include_term_=0;
     last_rest_election_time_=now();
     last_rest_heartbeat_time_=now();
+    
     readPersist(persister_->readRaftState());
     if(last_snapshot_include_index_>0){
         last_appiled_=last_snapshot_include_index_;
     }
-    last_snapshot_include_index_=0;
-    last_snapshot_include_term_=0;
+
+    DPrintf("[Init&ReInit] Sever %d, term %d, lastSnapshotIncludeIndex {%d} , lastSnapshotIncludeTerm {%d}", me_,
+        current_term_, last_snapshot_include_index_, last_snapshot_include_term_);
+
+
     mtx_.unlock();
     //三个计时器，维护心跳、选举和日志同步
     std::thread t(&Raft::leaderHeartbeatTicker,this);

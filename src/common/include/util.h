@@ -46,6 +46,7 @@ std::chrono::milliseconds getRandomizedElectionTimeout();
 
 void sleepNMilliseconds(int N);
 
+void DPrintf(const char* format, ...);
 
 template<typename T>
 class LockQueue

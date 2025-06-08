@@ -2,7 +2,7 @@
 
 RaftServerRpcUtil::RaftServerRpcUtil(std::string ip,short port)
 {
-    stub_=new raftKVRpcProtoc::KVServerRpc_Stub(new MprpcChannel(ip,port));
+    stub_=new raftKVRpcProtoc::KVServerRpc_Stub(new MprpcChannel(ip,port,true));
 }
 RaftServerRpcUtil::~RaftServerRpcUtil()
 {

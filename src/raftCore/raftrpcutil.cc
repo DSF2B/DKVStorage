@@ -5,7 +5,7 @@
 
 RaftRpcUtil::RaftRpcUtil(std::string ip, uint16_t port)
 {
-    stub_ = new raftRpcProtoc::raftRpc_Stub(new MprpcChannel(ip,port));
+    stub_ = new raftRpcProtoc::raftRpc_Stub(new MprpcChannel(ip,port,true));
 
 }
 RaftRpcUtil::~RaftRpcUtil()
