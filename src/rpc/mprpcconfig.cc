@@ -37,10 +37,11 @@ void MprpcConfig::LoadConfigFile(const char *config_file){
 std::string MprpcConfig::Load(const std::string &key){
     // return m_configMap[key];
     auto it=m_configMap.find(key);
-    if(it!=m_configMap.end()){
-        return it->second;
+    if(it==m_configMap.end()){
+        return "";
     }
-    return "";
+    return it->second;
+    
 }
 
 void MprpcConfig::Trim(std::string &src_buf){

@@ -13,7 +13,7 @@ public:
     static Logger& GetInstance();
 private:
     int m_loglevel;
-    LockQueue<std::string> m_lockQue;
+    LockQueue1<std::string> m_lockQue;
     //单例
     Logger();
     Logger(const Logger&)=delete;

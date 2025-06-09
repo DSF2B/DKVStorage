@@ -647,5 +647,5 @@ src/rpc/CMakeFiles/rpc_lib.dir/__/common/util.cc.o: \
  /usr/include/c++/11/pstl/glue_numeric_defs.h /usr/include/c++/11/queue \
  /usr/include/c++/11/deque /usr/include/c++/11/bits/stl_deque.h \
  /usr/include/c++/11/bits/deque.tcc /usr/include/c++/11/bits/stl_queue.h \
- /usr/include/c++/11/thread \
+ /usr/include/c++/11/thread /usr/include/c++/11/iostream \
  /home/zilu/桌面/DKVStorage/src/common/include/config.h

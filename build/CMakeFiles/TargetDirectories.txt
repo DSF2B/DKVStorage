@@ -25,3 +25,11 @@
 /home/zilu/桌面/DKVStorage/build/example/raftExample/CMakeFiles/testRaftClient.dir
 /home/zilu/桌面/DKVStorage/build/example/raftExample/CMakeFiles/edit_cache.dir
 /home/zilu/桌面/DKVStorage/build/example/raftExample/CMakeFiles/rebuild_cache.dir
+/home/zilu/桌面/DKVStorage/build/example/rpcExample/CMakeFiles/edit_cache.dir
+/home/zilu/桌面/DKVStorage/build/example/rpcExample/CMakeFiles/rebuild_cache.dir
+/home/zilu/桌面/DKVStorage/build/example/rpcExample/callee/CMakeFiles/provider.dir
+/home/zilu/桌面/DKVStorage/build/example/rpcExample/callee/CMakeFiles/edit_cache.dir
+/home/zilu/桌面/DKVStorage/build/example/rpcExample/callee/CMakeFiles/rebuild_cache.dir
+/home/zilu/桌面/DKVStorage/build/example/rpcExample/caller/CMakeFiles/consumer.dir
+/home/zilu/桌面/DKVStorage/build/example/rpcExample/caller/CMakeFiles/edit_cache.dir
+/home/zilu/桌面/DKVStorage/build/example/rpcExample/caller/CMakeFiles/rebuild_cache.dir

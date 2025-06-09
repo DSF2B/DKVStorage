@@ -10,11 +10,11 @@ KvServer::KvServer(int me,int max_raft_state,std::string node_info_filename,shor
     apply_chan_=std::make_shared<LockQueue<ApplyMsg>>();
     raft_node_ = std::make_shared<Raft> ();
     //注册rpc服务，既与raft节点通信，又要接受client远程调用
-    std::thread t([this,port,node_info_filename]{
+    std::thread t([this,port]()->void{
         RpcProvider provider;
         provider.NotifyService(this);//server
         provider.NotifyService(raft_node_.get());//raft
-        provider.Run(me_,port,node_info_filename);
+        provider.Run(me_,port);
     });
     t.detach();
 

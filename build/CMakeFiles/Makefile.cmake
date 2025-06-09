@@ -13,6 +13,9 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/3.25.2/CMakeSystem.cmake"
   "/home/zilu/桌面/DKVStorage/example/CMakeLists.txt"
   "/home/zilu/桌面/DKVStorage/example/raftExample/CMakeLists.txt"
+  "/home/zilu/桌面/DKVStorage/example/rpcExample/CMakeLists.txt"
+  "/home/zilu/桌面/DKVStorage/example/rpcExample/callee/CMakeLists.txt"
+  "/home/zilu/桌面/DKVStorage/example/rpcExample/caller/CMakeLists.txt"
   "/home/zilu/桌面/DKVStorage/example/skipListExample/CMakeLists.txt"
   "/home/zilu/桌面/DKVStorage/src/CMakeLists.txt"
   "/home/zilu/桌面/DKVStorage/src/common/CMakeLists.txt"
@@ -59,6 +62,9 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "example/CMakeFiles/CMakeDirectoryInformation.cmake"
   "example/skipListExample/CMakeFiles/CMakeDirectoryInformation.cmake"
   "example/raftExample/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "example/rpcExample/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "example/rpcExample/callee/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "example/rpcExample/caller/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
@@ -68,4 +74,6 @@ set(CMAKE_DEPEND_INFO_FILES
   "example/skipListExample/CMakeFiles/testSkipList.dir/DependInfo.cmake"
   "example/raftExample/CMakeFiles/testRaftServer.dir/DependInfo.cmake"
   "example/raftExample/CMakeFiles/testRaftClient.dir/DependInfo.cmake"
+  "example/rpcExample/callee/CMakeFiles/provider.dir/DependInfo.cmake"
+  "example/rpcExample/caller/CMakeFiles/consumer.dir/DependInfo.cmake"
   )

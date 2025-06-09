@@ -22,6 +22,7 @@
 #include "util.h"
 #include "persister.h"
 #include "config.h"
+// #include "monsoon.h"
 
 ///////////////选民的投票状态
 constexpr int Killed = 0;
@@ -158,7 +159,7 @@ private:
     int last_snapshot_include_index_;
     int last_snapshot_include_term_;
     //协程
-    // std::unique_ptr<monsoon::IOManager> io_manager_=nullptr;
+    // std::unique_ptr<monsoon::IOManager> m_ioManager=nullptr;
 
 
 };

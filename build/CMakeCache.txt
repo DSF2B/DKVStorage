@@ -221,10 +221,7 @@ DKVStorage_IS_TOP_LEVEL:STATIC=ON
 DKVStorage_SOURCE_DIR:STATIC=/home/zilu/桌面/DKVStorage
 
 //Dependencies for the target
-rpc_lib_LIB_DEPENDS:STATIC=general;boost_serialization;
-
-//Dependencies for the target
-skip_list_on_raft_LIB_DEPENDS:STATIC=general;muduo_net;general;muduo_base;general;pthread;general;dl;
+fiber_lib_LIB_DEPENDS:STATIC=general;-ldl;
 
 
 ########################
@@ -329,7 +326,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=11
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=14
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP
@@ -376,6 +373,8 @@ CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 _CMAKE_LINKER_PUSHPOP_STATE_SUPPORTED:INTERNAL=TRUE
 //Description of the variable
 src_common:INTERNAL=/home/zilu/桌面/DKVStorage/src/common/util.cc
+//Description of the variable
+src_fiber:INTERNAL=/home/zilu/桌面/DKVStorage/src/fiber/fd_manager.cpp;/home/zilu/桌面/DKVStorage/src/fiber/fiber.cpp;/home/zilu/桌面/DKVStorage/src/fiber/hook.cpp;/home/zilu/桌面/DKVStorage/src/fiber/iomanager.cpp;/home/zilu/桌面/DKVStorage/src/fiber/scheduler.cpp;/home/zilu/桌面/DKVStorage/src/fiber/thread.cpp;/home/zilu/桌面/DKVStorage/src/fiber/timer.cpp;/home/zilu/桌面/DKVStorage/src/fiber/utils.cpp
 //Description of the variable
 src_raftClient:INTERNAL=/home/zilu/桌面/DKVStorage/src/raftClient/raftclient.cc;/home/zilu/桌面/DKVStorage/src/raftClient/raftserverrpcutil.cc
 //Description of the variable

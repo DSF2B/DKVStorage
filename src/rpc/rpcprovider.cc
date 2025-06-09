@@ -28,7 +28,7 @@ void RpcProvider::NotifyService(google::protobuf::Service *service){
 
 }
 //启动rpc服务节点，开始提供rpc远程调用服务
-void RpcProvider::Run(int nodeIndex, short port,std::string node_info_filename){
+void RpcProvider::Run(int nodeIndex, short port){
     char *ipC;
     char hname[128];
     struct hostent *hent;
@@ -41,7 +41,7 @@ void RpcProvider::Run(int nodeIndex, short port,std::string node_info_filename){
 
     std::string node = "node" + std::to_string(nodeIndex);
     std::ofstream outfile;
-    outfile.open(node_info_filename, std::ios::app);  //打开文件并追加写入
+    outfile.open("server.conf", std::ios::app);  //打开文件并追加写入
     if (!outfile.is_open()) {
         std::cout << "打开文件失败！" << std::endl;
         exit(EXIT_FAILURE);
@@ -62,8 +62,9 @@ void RpcProvider::Run(int nodeIndex, short port,std::string node_info_filename){
     std::cout<<"rpcprovider start service at ip:"<<ip<<"port"<<port<<std::endl;
     //启动服务
     muduo_server_->start();
+    std::cout<<"event start loop"<<std::endl;
     event_loop_.loop();
-    std::cout<<"Run over"<<std::endl;
+    
 }   
 
 void RpcProvider::OnConnection(const muduo::net::TcpConnectionPtr &conn){
@@ -129,7 +130,7 @@ void RpcProvider::OnMessage(const muduo::net::TcpConnectionPtr& conn,
         return ;
     }
 
-    std::string args_str = recv_buf.substr(4+header_size, args_size);
+    std::string args_str;
     
       // 直接读取args_size长度的字符串数据
     bool read_args_success = coded_input.ReadString(&args_str, args_size);
@@ -180,11 +181,13 @@ void RpcProvider::OnMessage(const muduo::net::TcpConnectionPtr& conn,
    //给下面的method方法的调用，绑定一个Closure回调函数
 
    //框架根据远端rpc请求，调用当前节点上的方法，比如Login
-    service->CallMethod(method,nullptr,request,response,done); 
+   std::cout<<"provider working"<<std::endl; 
+   service->CallMethod(method,nullptr,request,response,done); 
 
 }
 
 void RpcProvider::SendRpcResponse(const muduo::net::TcpConnectionPtr& conn, google::protobuf::Message* response){
+    std::cout<<"Response ready to send!"<<std::endl;
     std::string response_str;
     if(response->SerializeToString(&response_str)){    //response序列化
         //  序列化成功后，通过网络把rpc方法执行结果response发送给rpc调用方conn
@@ -195,7 +198,7 @@ void RpcProvider::SendRpcResponse(const muduo::net::TcpConnectionPtr& conn, goog
     }
     // conn->shutdown();
     std::cout<<"response send"<<std::endl;
-}
+} 
 RpcProvider::~RpcProvider() {
     std::cout << "[func - RpcProvider::~RpcProvider()]: ip和port信息：" << muduo_server_->ipPort() << std::endl;
     event_loop_.quit();

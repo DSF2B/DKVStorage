@@ -43,13 +43,32 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for each subdirectory.
+  # Include the install script for the subdirectory.
   include("/home/zilu/桌面/DKVStorage/build/src/skipList/cmake_install.cmake")
-  include("/home/zilu/桌面/DKVStorage/build/src/common/cmake_install.cmake")
-  include("/home/zilu/桌面/DKVStorage/build/src/rpc/cmake_install.cmake")
-  include("/home/zilu/桌面/DKVStorage/build/src/raftRpc/cmake_install.cmake")
-  include("/home/zilu/桌面/DKVStorage/build/src/raftCore/cmake_install.cmake")
-  include("/home/zilu/桌面/DKVStorage/build/src/raftClient/cmake_install.cmake")
+endif()
 
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("/home/zilu/桌面/DKVStorage/build/src/common/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("/home/zilu/桌面/DKVStorage/build/src/rpc/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("/home/zilu/桌面/DKVStorage/build/src/raftRpc/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("/home/zilu/桌面/DKVStorage/build/src/raftCore/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("/home/zilu/桌面/DKVStorage/build/src/raftClient/cmake_install.cmake")
 endif()
 

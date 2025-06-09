@@ -181,6 +181,32 @@ testRaftClient/fast:
 	$(MAKE) $(MAKESILENT) -f example/raftExample/CMakeFiles/testRaftClient.dir/build.make example/raftExample/CMakeFiles/testRaftClient.dir/build
 .PHONY : testRaftClient/fast
 
+#=============================================================================
+# Target rules for targets named provider
+
+# Build rule for target.
+provider: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 provider
+.PHONY : provider
+
+# fast build rule for target.
+provider/fast:
+	$(MAKE) $(MAKESILENT) -f example/rpcExample/callee/CMakeFiles/provider.dir/build.make example/rpcExample/callee/CMakeFiles/provider.dir/build
+.PHONY : provider/fast
+
+#=============================================================================
+# Target rules for targets named consumer
+
+# Build rule for target.
+consumer: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 consumer
+.PHONY : consumer
+
+# fast build rule for target.
+consumer/fast:
+	$(MAKE) $(MAKESILENT) -f example/rpcExample/caller/CMakeFiles/consumer.dir/build.make example/rpcExample/caller/CMakeFiles/consumer.dir/build
+.PHONY : consumer/fast
+
 src/common/util.o: src/common/util.cc.o
 .PHONY : src/common/util.o
 
@@ -573,6 +599,8 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... consumer"
+	@echo "... provider"
 	@echo "... rpc_lib"
 	@echo "... skip_list_on_raft"
 	@echo "... testRaftClient"

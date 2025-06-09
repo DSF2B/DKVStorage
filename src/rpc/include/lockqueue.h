@@ -7,7 +7,7 @@
 //异步日志 阻塞队列
 
 template<typename T>
-class LockQueue{
+class LockQueue1{
 public:
     void Push(const T& data){
         std::lock_guard<std::mutex> lock(m_mutex);

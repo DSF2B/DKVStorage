@@ -43,9 +43,17 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for each subdirectory.
+  # Include the install script for the subdirectory.
   include("/home/zilu/桌面/DKVStorage/build/example/skipListExample/cmake_install.cmake")
-  include("/home/zilu/桌面/DKVStorage/build/example/raftExample/cmake_install.cmake")
+endif()
 
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("/home/zilu/桌面/DKVStorage/build/example/raftExample/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("/home/zilu/桌面/DKVStorage/build/example/rpcExample/cmake_install.cmake")
 endif()
 
