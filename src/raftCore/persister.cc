@@ -59,6 +59,9 @@ Persister::Persister(int me):
     }else{
         file_open_flag=false;
     }
+    if (!file_open_flag) {
+    DPrintf("[func-Persister::Persister] file open error");
+    }
     raft_state_out_stream_.open(raft_state_filename_);
     snapshot_out_stream_.open(snapshot_filename_);
 }

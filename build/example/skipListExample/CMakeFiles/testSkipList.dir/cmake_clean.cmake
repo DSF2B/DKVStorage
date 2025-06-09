@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "/home/zilu/桌面/DKVStorage/bin/testSkipList"
-  "/home/zilu/桌面/DKVStorage/bin/testSkipList.pdb"
+  "../../../bin/testSkipList"
+  "../../../bin/testSkipList.pdb"
   "CMakeFiles/testSkipList.dir/testSkipList.cc.o"
   "CMakeFiles/testSkipList.dir/testSkipList.cc.o.d"
 )

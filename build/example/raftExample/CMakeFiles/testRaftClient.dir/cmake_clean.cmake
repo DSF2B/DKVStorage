@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "/home/zilu/桌面/DKVStorage/bin/testRaftClient"
-  "/home/zilu/桌面/DKVStorage/bin/testRaftClient.pdb"
+  "../../../bin/testRaftClient"
+  "../../../bin/testRaftClient.pdb"
   "CMakeFiles/testRaftClient.dir/__/__/src/common/util.cc.o"
   "CMakeFiles/testRaftClient.dir/__/__/src/common/util.cc.o.d"
   "CMakeFiles/testRaftClient.dir/__/__/src/raftClient/raftclient.cc.o"

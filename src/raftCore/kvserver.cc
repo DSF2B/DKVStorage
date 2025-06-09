@@ -193,7 +193,7 @@ void KvServer::putAppend(const raftKVRpcProtoc::PutAppendRequest *request,
     int raft_log_index = -1;
     int _ = -1;
     bool isleader = false;
-
+    
     raft_node_->start(op, &raft_log_index, &_, &isleader);
     if(!isleader){
         DPrintf(

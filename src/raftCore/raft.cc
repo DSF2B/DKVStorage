@@ -487,13 +487,16 @@ void Raft::requestVote(const raftRpcProtoc::RequestVoteRequest *request,
         response->set_term(current_term_);
         response->set_votegranted(false);
         response->set_votestate(Expire);
+        persist();
         return;
     }
     //本节点也是candidata但是term小要转为Follower
     if(request->term() >current_term_){
         status_=Follower;
-        current_term_=response->term();
+        current_term_=request->term();
         votedfor_=-1;
+        persist();
+        return;
     }
     myAssert(request->term() == current_term_,
         format("[func--rf{%d}] 前面校验过args.Term==rf.currentTerm，这里却不等", me_));
@@ -513,6 +516,7 @@ void Raft::requestVote(const raftRpcProtoc::RequestVoteRequest *request,
         response->set_term(current_term_);
         response->set_votestate(Voted);
         response->set_votegranted(false);
+        persist();
         return;
     }
 
@@ -522,7 +526,7 @@ void Raft::requestVote(const raftRpcProtoc::RequestVoteRequest *request,
         response->set_term(current_term_);
         response->set_votegranted(false);
         response->set_votestate(Voted);
-        return ;
+
     }else{
         //投给candidate
         votedfor_=request->candidateid();
@@ -530,15 +534,14 @@ void Raft::requestVote(const raftRpcProtoc::RequestVoteRequest *request,
         response->set_term(current_term_);
         response->set_votestate(Normal);
         response->set_votegranted(true);
-        persist();
-        return;
     }
+    persist();
+    return ;
 }
 //判断candidata的日志是否比当前节点日志更新
 bool Raft::upToDate(int index,int term)
 {
     int last_term=-1,last_index=-1;
-    getLastLogIndexAndTerm(&index,&term);
     getLastLogIndexAndTerm(&last_index, &last_term);
     return term > last_term || (term == last_term && index >= last_index);
 }
@@ -625,11 +628,12 @@ bool Raft::sendRequestVote(int server,std::shared_ptr<raftRpcProtoc::RequestVote
 
     if(!response->votegranted()){
         //该节点没给自己投票，结束
-        return true;
+        return true; 
     }
     *vote_num=*vote_num+1;
     if(*vote_num >= peers_.size()/2+1){
         //获得半数以上投票
+        std::cout<<"Become Leader success"<<std::endl;
         *vote_num=0;
         if(status_ == Leader){
             //已经是leader又被选为leader,不正常

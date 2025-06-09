@@ -150,6 +150,11 @@
   "file": "/home/zilu/桌面/DKVStorage/src/raftClient/raftserverrpcutil.cc"
 },
 {
+  "directory": "/home/zilu/桌面/DKVStorage/build/example/raftExample",
+  "command": "/usr/bin/g++  -I/home/zilu/桌面/DKVStorage/src/common/include -I/home/zilu/桌面/DKVStorage/src/fiber/include -I/home/zilu/桌面/DKVStorage/src/raftClient/include -I/home/zilu/桌面/DKVStorage/src/raftCore/include -I/home/zilu/桌面/DKVStorage/src/raftRpc/include -I/home/zilu/桌面/DKVStorage/src/rpc/include -I/home/zilu/桌面/DKVStorage/src/skipList/include -I/home/zilu/桌面/DKVStorage/example -g -std=gnu++20 -o CMakeFiles/singleServer.dir/singleServer.cc.o -c /home/zilu/桌面/DKVStorage/example/raftExample/singleServer.cc",
+  "file": "/home/zilu/桌面/DKVStorage/example/raftExample/singleServer.cc"
+},
+{
   "directory": "/home/zilu/桌面/DKVStorage/build/example/rpcExample/callee",
   "command": "/usr/bin/g++  -I/home/zilu/桌面/DKVStorage/src/common/include -I/home/zilu/桌面/DKVStorage/src/fiber/include -I/home/zilu/桌面/DKVStorage/src/raftClient/include -I/home/zilu/桌面/DKVStorage/src/raftCore/include -I/home/zilu/桌面/DKVStorage/src/raftRpc/include -I/home/zilu/桌面/DKVStorage/src/rpc/include -I/home/zilu/桌面/DKVStorage/src/skipList/include -I/home/zilu/桌面/DKVStorage/example -g -std=gnu++20 -o CMakeFiles/provider.dir/friendService.cpp.o -c /home/zilu/桌面/DKVStorage/example/rpcExample/callee/friendService.cpp",
   "file": "/home/zilu/桌面/DKVStorage/example/rpcExample/callee/friendService.cpp"

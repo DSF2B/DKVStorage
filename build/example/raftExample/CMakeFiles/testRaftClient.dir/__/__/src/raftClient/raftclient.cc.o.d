@@ -721,13 +721,18 @@ example/raftExample/CMakeFiles/testRaftClient.dir/__/__/src/raftClient/raftclien
  /usr/include/c++/11/thread \
  /home/zilu/桌面/DKVStorage/src/common/include/config.h \
  /home/zilu/桌面/DKVStorage/src/rpc/include/rpcprovider.h \
- /usr/include/muduo/net/TcpServer.h /usr/include/muduo/base/Atomic.h \
- /usr/include/muduo/base/noncopyable.h /usr/include/muduo/base/Types.h \
- /usr/include/muduo/net/TcpConnection.h \
- /usr/include/muduo/base/StringPiece.h /usr/include/muduo/net/Callbacks.h \
- /usr/include/muduo/base/Timestamp.h /usr/include/muduo/base/copyable.h \
- /usr/include/muduo/net/Buffer.h /usr/include/muduo/net/Endian.h \
- /usr/include/muduo/net/InetAddress.h /usr/include/boost/any.hpp \
+ /usr/local/include/muduo/net/TcpServer.h \
+ /usr/local/include/muduo/base/Atomic.h \
+ /usr/local/include/muduo/base/noncopyable.h \
+ /usr/local/include/muduo/base/Types.h \
+ /usr/local/include/muduo/net/TcpConnection.h \
+ /usr/local/include/muduo/base/StringPiece.h \
+ /usr/local/include/muduo/net/Callbacks.h \
+ /usr/local/include/muduo/base/Timestamp.h \
+ /usr/local/include/muduo/base/copyable.h \
+ /usr/local/include/muduo/net/Buffer.h \
+ /usr/local/include/muduo/net/Endian.h \
+ /usr/local/include/muduo/net/InetAddress.h /usr/include/boost/any.hpp \
  /usr/include/boost/type_index.hpp \
  /usr/include/boost/type_index/stl_type_index.hpp \
  /usr/include/boost/type_index/type_index_facade.hpp \
@@ -739,9 +744,11 @@ example/raftExample/CMakeFiles/testRaftClient.dir/__/__/src/raftClient/raftclien
  /usr/include/boost/type_traits/add_pointer.hpp \
  /usr/include/boost/type_traits/add_reference.hpp \
  /usr/include/boost/utility/enable_if.hpp \
- /usr/include/boost/core/enable_if.hpp /usr/include/muduo/net/EventLoop.h \
- /usr/include/muduo/base/Mutex.h /usr/include/muduo/base/CurrentThread.h \
- /usr/include/muduo/net/TimerId.h /usr/include/c++/11/fstream \
+ /usr/include/boost/core/enable_if.hpp \
+ /usr/local/include/muduo/net/EventLoop.h \
+ /usr/local/include/muduo/base/Mutex.h \
+ /usr/local/include/muduo/base/CurrentThread.h \
+ /usr/local/include/muduo/net/TimerId.h /usr/include/c++/11/fstream \
  /usr/include/x86_64-linux-gnu/c++/11/bits/basic_file.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++io.h \
  /usr/include/c++/11/bits/fstream.tcc /usr/include/netdb.h \

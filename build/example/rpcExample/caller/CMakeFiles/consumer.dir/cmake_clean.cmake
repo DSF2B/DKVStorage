@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "/home/zilu/桌面/DKVStorage/bin/consumer"
-  "/home/zilu/桌面/DKVStorage/bin/consumer.pdb"
+  "../../../../bin/consumer"
+  "../../../../bin/consumer.pdb"
   "CMakeFiles/consumer.dir/__/friend.pb.cc.o"
   "CMakeFiles/consumer.dir/__/friend.pb.cc.o.d"
   "CMakeFiles/consumer.dir/callFriendService.cpp.o"

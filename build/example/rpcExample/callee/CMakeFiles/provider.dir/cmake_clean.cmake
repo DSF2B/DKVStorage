@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "/home/zilu/桌面/DKVStorage/bin/provider"
-  "/home/zilu/桌面/DKVStorage/bin/provider.pdb"
+  "../../../../bin/provider"
+  "../../../../bin/provider.pdb"
   "CMakeFiles/provider.dir/__/friend.pb.cc.o"
   "CMakeFiles/provider.dir/__/friend.pb.cc.o.d"
   "CMakeFiles/provider.dir/friendService.cpp.o"
