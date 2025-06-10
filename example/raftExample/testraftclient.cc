@@ -20,13 +20,15 @@ int main(int argc,char** argv){
     RaftClient client;
     client.init(config_filename);
     auto start=now();
-    int count=5;
+    int count=50;
     int temp=count;
     while(temp--){
         client.put("x",std::to_string(temp));
-        std::cout<<"put"<<temp<<std::endl;
+        std::cout<<"put:"<<temp<<std::endl;
         std::string get1=client.get("x");
-        std::cout<<"get return :%s"<<get1.c_str()<<std::endl;
+        std::printf("get return :{%s}\r\n", get1.c_str());
+
+        // std::cout<<"get:"<<get1<<std::endl;
     }
     return 0;
 }

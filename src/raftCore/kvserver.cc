@@ -97,10 +97,8 @@ void KvServer::executeGetOpOnKVDB(Op op, std::string *value, bool *exist){
     std::unique_lock<std::mutex> lock(mtx_);
     *value="";
     *exist=false;
-    if(skiplist_.searchElement(op.key_,op.value_)){
+    if(skiplist_.searchElement(op.key_,*value)){
         *exist=true;
-    }else{
-
     }
     last_request_id_[op.client_id_]=op.request_id_;
     lock.unlock();
@@ -117,7 +115,7 @@ void KvServer::get(const raftKVRpcProtoc::GetRequest *request,
 
     int raft_log_index=-1;//raftIndex是日志条目的索引，用于标识该请求的Raft日志条目。
     int _=-1;
-    bool is_leader=-1;
+    bool is_leader=false;
     //先把op传到raft进行同步，再由raft进行commit,添加到wait
     raft_node_->start(op,&raft_log_index,&_,&is_leader);//将op（Get操作）提交到Raft日志中
 
@@ -163,10 +161,12 @@ void KvServer::get(const raftKVRpcProtoc::GetRequest *request,
             //raft已经提交了该command（op），raft内部节点已经一致，可以从db中执行get了
             std::string value;
             bool exist = false;
+            std::cout<<"if(raft_commit_op.client_id_==op.client_id_ && raft_commit_op.request_id_==op.request_id_){"<<std::endl;
             executeGetOpOnKVDB(op, &value, &exist);
             if (exist) {
                 response->set_err(OK);
                 response->set_value(value);
+                std::cout<<"OKOKOKOKOKOKOKOKOK"<<std::endl;
             } else {
                 response->set_err(ErrNoKey);
                 response->set_value("");
@@ -178,7 +178,8 @@ void KvServer::get(const raftKVRpcProtoc::GetRequest *request,
     auto tmp=wait_applychan_[raft_log_index];
     wait_applychan_.erase(raft_log_index);
     delete tmp;
-    lock.unlock();   
+    lock.unlock();  
+
 }
 //server向众raft节点增加数据
 void KvServer::putAppend(const raftKVRpcProtoc::PutAppendRequest *request,

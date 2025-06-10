@@ -192,8 +192,9 @@ void Raft::doHeartbeat()
             if(next_index_[i]<1){
                 exit(EXIT_FAILURE);
             }
+            std::cout<<"live"<<std::endl;
             //如果需要发给该节点的index小于snapshot那么就把快照发过去
-            if(next_index_[i] <last_snapshot_include_index_){
+            if(next_index_[i] <=last_snapshot_include_index_){
                 std::thread t(&Raft::leaderSendSnapshot,this,i);
                 t.detach();
                 continue;
@@ -201,10 +202,11 @@ void Raft::doHeartbeat()
             //构造response参数
             int pre_log_index=-1,pre_log_term=-1;
             getPrevLogInfo(i,&pre_log_index,&pre_log_term);
-            std::shared_ptr<raftRpcProtoc::AppendEntriesRequest> append_entries_request = std::shared_ptr<raftRpcProtoc::AppendEntriesRequest> ();
+            std::shared_ptr<raftRpcProtoc::AppendEntriesRequest> append_entries_request = std::make_shared<raftRpcProtoc::AppendEntriesRequest> ();
             append_entries_request->set_term(current_term_);
             append_entries_request->set_leaderid(me_);
             append_entries_request->set_prevlogindex(pre_log_index);
+            append_entries_request->set_prevlogterm(pre_log_term);
             append_entries_request->clear_entries();
             append_entries_request->set_leadercommit(commit_index_);
             //上一条日志不是快照的最后一个日志，可以从日志数组中拿日志
@@ -495,8 +497,7 @@ void Raft::requestVote(const raftRpcProtoc::RequestVoteRequest *request,
         status_=Follower;
         current_term_=request->term();
         votedfor_=-1;
-        persist();
-        return;
+
     }
     myAssert(request->term() == current_term_,
         format("[func--rf{%d}] 前面校验过args.Term==rf.currentTerm，这里却不等", me_));

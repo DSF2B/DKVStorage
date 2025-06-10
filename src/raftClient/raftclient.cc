@@ -38,6 +38,7 @@ std::string RaftClient::get(std::string key){
     {
         raftKVRpcProtoc::GetResponse response;
         bool ok=servers_[server]->get(&request,&response);
+        std::cout<<"ok?"<<response.err()<<"value:"<<response.value()<<std::endl;
         if(!ok || response.err()== ErrWrongLeader){
             server=(server+1)%servers_.size();
             continue;

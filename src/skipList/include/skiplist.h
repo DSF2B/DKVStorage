@@ -185,7 +185,7 @@ int SkipList<K, V>::insertElement(K k,V v){
             new_node->forward_[i]=update[i]->forward_[i];
             update[i]->forward_[i]=new_node;
         }
-        std::cout<<"insert key:"<<k<<"value:"<<v<<std::endl;
+        std::cout<<"Successfully insert key:"<<k<<"value:"<<v<<std::endl;
         element_count_++;
     }
     return 0;
@@ -207,6 +207,8 @@ void SkipList<K, V>::displayList(){
 
 template <typename K, typename V>
 bool SkipList<K, V>::searchElement(K k, V& v){
+    std::cout << "search_element-----------------" << std::endl;
+
     Node<K,V>* cur=head_;
 
     for(int i=skip_list_level_;i>=0;i--){
@@ -217,6 +219,7 @@ bool SkipList<K, V>::searchElement(K k, V& v){
     cur=cur->forward_[0];
     if(cur && cur->getKey() == k){
         v=cur->getValue();
+        std::cout << "Found key: " << k << ", value: " << cur->getValue() << std::endl;
         return true;
     }
     return false;
