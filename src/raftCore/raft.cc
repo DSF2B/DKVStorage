@@ -11,17 +11,16 @@ void Raft::appendEntries(const raftRpcProtoc::AppendEntriesRequest *request,raft
         response->set_term(current_term_);
         response->set_updatenextindex(-100);
         DPrintf("[func-AppendEntries-rf{%d}] 拒绝了 因为Leader{%d}的term{%v}< rf{%d}.term{%d}\n", me_, request->leaderid(),
-        request->term(), me_, current_term_);
+            request->term(), me_, current_term_);
         return ;
     }
-
-
-    if(request->term() < current_term_){
+    DEFER { persist(); };
+    if(request->term() > current_term_){
         //如果自己的term落后，把自己设置为follower
         status_=Follower;
         current_term_=request->term();
         votedfor_=-1;
-    } 
+    }
     myAssert(request->term() == current_term_, format("assert {args.Term == rf.currentTerm} fail"));
 
     
@@ -36,7 +35,6 @@ void Raft::appendEntries(const raftRpcProtoc::AppendEntriesRequest *request,raft
         response->set_success(false);
         response->set_term(current_term_);
         response->set_updatenextindex(getLastLogIndex()+1);
-        persist();
         return;
     }
     else if(request->prevlogindex() < last_snapshot_include_index_){
@@ -73,26 +71,20 @@ void Raft::appendEntries(const raftRpcProtoc::AppendEntriesRequest *request,raft
         }
 
         myAssert(
-        getLastLogIndex() >= request->prevlogindex() + request->entries_size(),
-        format("[func-AppendEntries1-rf{%d}]rf.getLastLogIndex(){%d} != args.PrevLogIndex{%d}+len(args.Entries){%d}",
-               me_, getLastLogIndex(), request->prevlogindex(), request->entries_size()));
+            getLastLogIndex() >= request->prevlogindex() + request->entries_size(),
+            format("[func-AppendEntries1-rf{%d}]rf.getLastLogIndex(){%d} != args.PrevLogIndex{%d}+len(args.Entries){%d}",
+            me_, getLastLogIndex(), request->prevlogindex(), request->entries_size()));
 
         if(request->leadercommit() > commit_index_){
             //leader提交的日志比本节点提交的日志多
             //所以不能直接把本节点现有的日志全提交，最多只能提交leader已经提交的
             commit_index_=std::min(request->leadercommit(),getLastLogIndex());
         }
-        if(commit_index_>getLastLogIndex()){
-            persist();
-            exit(EXIT_FAILURE);
-        }
-
         myAssert(getLastLogIndex() >= commit_index_,
             format("[func-AppendEntries1-rf{%d}]  rf.getLastLogIndex{%d} < rf.commitIndex{%d}", me_,
                 getLastLogIndex(), commit_index_));
         response->set_success(true);
         response->set_term(current_term_);
-        persist();
         return ;
     }
     else{
@@ -107,7 +99,6 @@ void Raft::appendEntries(const raftRpcProtoc::AppendEntriesRequest *request,raft
         }
         response->set_success(false);
         response->set_term(current_term_);
-        persist();
         return ;
     }
 
@@ -118,7 +109,7 @@ void Raft::applyTicker()
     while(true){
         std::unique_lock<std::mutex> lock(mtx_);
         if (status_ == Leader) {
-            DPrintf("[Raft::applierTicker() - raft{%d}]  m_lastApplied{%d}   m_commitIndex{%d}", me_, last_appiled_,
+            DPrintf("[Raft::applierTicker() - raft{%d}]  last_appiled_{%d}   m_commitIndex{%d}", me_, last_appiled_,
                 commit_index_);
         }
         auto apply_msgs=getApplyLogs();
@@ -161,7 +152,9 @@ void Raft::doElection()
             }
             int last_log_index=-1,last_log_term=-1;
             getLastLogIndexAndTerm(&last_log_index,&last_log_term);
-            std::shared_ptr<raftRpcProtoc::RequestVoteRequest> request_vote_request=std::make_shared<raftRpcProtoc::RequestVoteRequest> ();
+
+            std::shared_ptr<raftRpcProtoc::RequestVoteRequest> request_vote_request=
+                std::make_shared<raftRpcProtoc::RequestVoteRequest> ();
             request_vote_request->set_term(current_term_);
             request_vote_request->set_candidateid(me_);
             request_vote_request->set_lastlogindex(last_log_index);
@@ -172,7 +165,6 @@ void Raft::doElection()
             t.detach();
         }
     }
-
 }
 //leader发起心跳
 void Raft::doHeartbeat()
@@ -189,9 +181,6 @@ void Raft::doHeartbeat()
             }
             DPrintf("[func-Raft::doHeartBeat()-Leader: {%d}] Leader的心跳定时器触发了 index:{%d}\n", me_, i);
             myAssert(next_index_[i] >= 1, format("rf.nextIndex[%d] = {%d}", i, next_index_[i]));
-            if(next_index_[i]<1){
-                exit(EXIT_FAILURE);
-            }
             std::cout<<"live"<<std::endl;
             //如果需要发给该节点的index小于snapshot那么就把快照发过去
             if(next_index_[i] <=last_snapshot_include_index_){
@@ -202,7 +191,8 @@ void Raft::doHeartbeat()
             //构造response参数
             int pre_log_index=-1,pre_log_term=-1;
             getPrevLogInfo(i,&pre_log_index,&pre_log_term);
-            std::shared_ptr<raftRpcProtoc::AppendEntriesRequest> append_entries_request = std::make_shared<raftRpcProtoc::AppendEntriesRequest> ();
+            std::shared_ptr<raftRpcProtoc::AppendEntriesRequest> append_entries_request = 
+                std::make_shared<raftRpcProtoc::AppendEntriesRequest> ();
             append_entries_request->set_term(current_term_);
             append_entries_request->set_leaderid(me_);
             append_entries_request->set_prevlogindex(pre_log_index);
@@ -214,7 +204,8 @@ void Raft::doHeartbeat()
                 for(int j=getSlicesIndexFromLogIndex(pre_log_index)+1;
                 j<logs_.size();j++){
                     //add_entries给Entries添加一个LogEntry 对象，返回指向该新对象的指针
-                    raftRpcProtoc::LogEntry* send_entry_prt = append_entries_request->add_entries();
+                    raftRpcProtoc::LogEntry* send_entry_prt = 
+                        append_entries_request->add_entries();
                     //对这个空的对象赋值
                     *send_entry_prt = logs_[j];
                 }
@@ -222,17 +213,20 @@ void Raft::doHeartbeat()
             //拿全部的日志
             else{
                 for(const auto &item: logs_){
-                    raftRpcProtoc::LogEntry* send_entry_prt = append_entries_request->add_entries();
+                    raftRpcProtoc::LogEntry* send_entry_prt = 
+                        append_entries_request->add_entries();
                     *send_entry_prt = item;
                 }
             }
             int last_log_index = getLastLogIndex();
             myAssert(append_entries_request->prevlogindex() + append_entries_request->entries_size() == last_log_index,
                format("append_entries_request.PrevLogIndex{%d}+len(append_entries_request.Entries){%d} != lastLogIndex{%d}",
-                      append_entries_request->prevlogindex(), append_entries_request->entries_size(), last_log_index));
-            std::shared_ptr<raftRpcProtoc::AppendEntriesResponse> append_entries_response = std::make_shared<raftRpcProtoc::AppendEntriesResponse>();
-            std::thread t(&Raft::sendAppendEntries,this,i,append_entries_request,append_entries_response,append_nums);
-            t.detach();
+                append_entries_request->prevlogindex(), append_entries_request->entries_size(), last_log_index));
+            const std::shared_ptr<raftRpcProtoc::AppendEntriesResponse> append_entries_response = 
+                std::make_shared<raftRpcProtoc::AppendEntriesResponse>();
+            
+            std::thread t1(&Raft::sendAppendEntries,this,i,append_entries_request,append_entries_response,append_nums);
+            t1.detach();
         }
         last_rest_heartbeat_time_ = now();
     }
@@ -259,7 +253,7 @@ void Raft::electionTimeoutTicker()
             usleep(std::chrono::duration_cast<std::chrono::microseconds>(suitable_sleep_time).count());
             auto end = std::chrono::steady_clock::now();
             std::chrono::duration<double, std::milli> duration = end - start;
-                  std::cout << "\033[1;35m electionTimeOutTicker();函数设置睡眠时间为: "
+            std::cout << "\033[1;35m electionTimeOutTicker();函数设置睡眠时间为: "
                 << std::chrono::duration_cast<std::chrono::milliseconds>(suitable_sleep_time).count() << " 毫秒\033[0m"
                 << std::endl;
             std::cout << "\033[1;35m electionTimeOutTicker();函数实际睡眠时间为: " << duration.count() << " 毫秒\033[0m"
@@ -272,18 +266,19 @@ void Raft::electionTimeoutTicker()
         doElection();
     }
 }
+
 //获取完成同步的日志，即上次apply和当前已经commit之间的日志
 std::vector<ApplyMsg> Raft::getApplyLogs()
 {
     std::vector<ApplyMsg> apply_msgs;
-    myAssert(commit_index_ <= getLastLogIndex(), format("[func-getApplyLogs-rf{%d}] commitIndex{%d} >getLastLogIndex{%d}",
+    myAssert(commit_index_ <= getLastLogIndex(), format("[func-getApplyLogs-rf{%d}] commitIndex_{%d} >getLastLogIndex{%d}",
                                                         me_, commit_index_, getLastLogIndex()));
 
     while(last_appiled_<commit_index_){
         last_appiled_++;
         myAssert(logs_[getSlicesIndexFromLogIndex(last_appiled_)].logindex() == last_appiled_,
-                    format("rf.logs[rf.getSlicesIndexFromLogIndex(rf.lastApplied)].LogIndex{%d} != rf.lastApplied{%d} ",
-                            logs_[getSlicesIndexFromLogIndex(last_appiled_)].logindex(), last_appiled_));
+            format("rf.logs[rf.getSlicesIndexFromLogIndex(rf.lastApplied)].LogIndex{%d} != rf.lastApplied{%d} ",
+            logs_[getSlicesIndexFromLogIndex(last_appiled_)].logindex(), last_appiled_));
         
         ApplyMsg apply_msg;
         apply_msg.command_vaild_=true;
@@ -317,7 +312,11 @@ void Raft::getPrevLogInfo(int i,int* preindex,int* preterm)
 //检查当前节点是否是leader
 void Raft::getState(int* term,bool* isLeader)
 {
-    std::lock_guard<std::mutex> lock(mtx_);
+    std::unique_lock<std::mutex> lock(mtx_);
+    DEFER {
+        // todo 暂时不清楚会不会导致死锁
+        lock.unlock();
+    };
     *term = current_term_;
     *isLeader=(status_==Leader);
 }
@@ -325,7 +324,8 @@ void Raft::getState(int* term,bool* isLeader)
 void Raft::installSnapshot(const raftRpcProtoc::InstallSnapshotRequest *request, 
     raftRpcProtoc::InstallSnapshotResponse* response)
 {
-    std::lock_guard<std::mutex> lock(mtx_);
+    std::unique_lock<std::mutex> lock(mtx_);
+    DEFER { lock.unlock(); };
     if(request->term() < current_term_){
         response->set_term(current_term_);
         return ;
@@ -417,11 +417,12 @@ void Raft::leaderSendSnapshot(int server)
     request.set_lastincludedindex(last_snapshot_include_index_);
     request.set_lastincludedterm(last_snapshot_include_term_);
     request.set_data(persister_->readSnapshot());
-    lock.unlock();
-
     raftRpcProtoc::InstallSnapshotResponse response;
+    lock.unlock();
+    
     bool ok=peers_[server]->InstallSnapshot(&request,&response);
     lock.lock();
+    DEFER { lock.unlock(); };
     if(!ok)return;
     if(status_!=Leader || current_term_ != request.term()){
         return ;
@@ -464,8 +465,8 @@ void Raft::leaderUpdateCommitIndex()
 bool Raft::matchLog(int log_index,int log_term)
 {
     myAssert(log_index >= last_snapshot_include_index_ && log_index <= getLastLogIndex(),
-            format("不满足：logIndex{%d}>=rf.lastSnapshotIncludeIndex{%d}&&logIndex{%d}<=rf.getLastLogIndex{%d}",
-                    log_index, last_snapshot_include_index_, log_index, getLastLogIndex()));
+        format("不满足：logIndex{%d}>=rf.lastSnapshotIncludeIndex{%d}&&logIndex{%d}<=rf.getLastLogIndex{%d}",
+        log_index, last_snapshot_include_index_, log_index, getLastLogIndex()));
 
     //是否处于一个term
     return log_term == getLogTermFromLogIndex(log_index);
@@ -485,11 +486,14 @@ void Raft::requestVote(const raftRpcProtoc::RequestVoteRequest *request,
     //退出之前调用
     // DeferClass<void> defer(this, &Raft::persist);
     //出现网络分区，该竞选者过时了
+    DEFER {
+        //应该先持久化，再撤销lock
+        persist();
+    };
     if(request->term() < current_term_){
         response->set_term(current_term_);
         response->set_votegranted(false);
         response->set_votestate(Expire);
-        persist();
         return;
     }
     //本节点也是candidata但是term小要转为Follower
@@ -517,7 +521,6 @@ void Raft::requestVote(const raftRpcProtoc::RequestVoteRequest *request,
         response->set_term(current_term_);
         response->set_votestate(Voted);
         response->set_votegranted(false);
-        persist();
         return;
     }
 
@@ -527,7 +530,7 @@ void Raft::requestVote(const raftRpcProtoc::RequestVoteRequest *request,
         response->set_term(current_term_);
         response->set_votegranted(false);
         response->set_votestate(Voted);
-
+        return;
     }else{
         //投给candidate
         votedfor_=request->candidateid();
@@ -535,9 +538,9 @@ void Raft::requestVote(const raftRpcProtoc::RequestVoteRequest *request,
         response->set_term(current_term_);
         response->set_votestate(Normal);
         response->set_votegranted(true);
+        return ;
     }
-    persist();
-    return ;
+    
 }
 //判断candidata的日志是否比当前节点日志更新
 bool Raft::upToDate(int index,int term)
@@ -576,10 +579,10 @@ int Raft::getLogTermFromLogIndex(int log_index)
 {
     myAssert(log_index >= last_snapshot_include_index_,
         format("[func-getSlicesIndexFromLogIndex-rf{%d}]  index{%d} < rf.lastSnapshotIncludeIndex{%d}", me_,
-                log_index, last_snapshot_include_index_));
+        log_index, last_snapshot_include_index_));
     int last_log_index = getLastLogIndex();
     myAssert(log_index <= last_log_index, format("[func-getSlicesIndexFromLogIndex-rf{%d}]  logIndex{%d} > lastLogIndex{%d}",
-                                        me_, log_index, last_log_index));
+                    me_, log_index, last_log_index));
 
     if(log_index == last_snapshot_include_index_){
         return last_snapshot_include_index_;
@@ -595,11 +598,11 @@ int Raft::getRaftStateSize()
 int Raft::getSlicesIndexFromLogIndex(int log_index)
 {   
     myAssert(log_index > last_snapshot_include_index_,
-            format("[func-getSlicesIndexFromLogIndex-rf{%d}]  index{%d} <= rf.lastSnapshotIncludeIndex{%d}", me_,
-                    log_index, last_snapshot_include_index_));
+        format("[func-getSlicesIndexFromLogIndex-rf{%d}]  index{%d} <= rf.lastSnapshotIncludeIndex{%d}", me_,
+        log_index, last_snapshot_include_index_));
     int lastLogIndex = getLastLogIndex();
     myAssert(log_index <= lastLogIndex, format("[func-getSlicesIndexFromLogIndex-rf{%d}]  logIndex{%d} > lastLogIndex{%d}",
-                                            me_, log_index, lastLogIndex));
+        me_, log_index, lastLogIndex));
     int slice_index=log_index - last_snapshot_include_index_ -1;
     return slice_index;
 }
@@ -656,7 +659,6 @@ bool Raft::sendRequestVote(int server,std::shared_ptr<raftRpcProtoc::RequestVote
         persist();
     }
     return true;
-    
 }
 //向其他节点发送日志,调用其AppendEntries远程方法
 bool Raft::sendAppendEntries(int i,std::shared_ptr<raftRpcProtoc::AppendEntriesRequest> request,
@@ -727,7 +729,7 @@ bool Raft::sendAppendEntries(int i,std::shared_ptr<raftRpcProtoc::AppendEntriesR
             myAssert(commit_index_ <= last_log_index,
                format("[func-sendAppendEntries,rf{%d}] lastLogIndex:%d  rf.commitIndex:%d\n", me_, last_log_index,
                       commit_index_));
-            }
+        }
     }
     return ok;
 }
@@ -780,6 +782,10 @@ void Raft::snapshot(int index,std::string snapshot)
 {
     std::lock_guard<std::mutex> lock(mtx_);
     if(last_snapshot_include_index_ >= index || index>commit_index_){
+        DPrintf(
+            "[func-Snapshot-rf{%d}] rejects replacing log with snapshotIndex %d as current snapshotIndex %d is larger or "
+            "smaller ",
+            me_, index, last_snapshot_include_index_);
         return;
     }
     auto last_log_index = getLastLogIndex();
@@ -797,9 +803,11 @@ void Raft::snapshot(int index,std::string snapshot)
     last_appiled_=std::max(last_appiled_,index);
 
     persister_->save(persistData(),snapshot);
-    if(logs_.size() + last_snapshot_include_index_ != last_log_index){
-        exit(EXIT_FAILURE);
-    }
+  DPrintf("[SnapShot]Server %d snapshot snapshot index {%d}, term {%d}, loglen {%d}", me_, index,
+        last_snapshot_include_index_, logs_.size());
+  myAssert(logs_.size() + last_snapshot_include_index_ == last_log_index,
+        format("len(rf.logs){%d} + rf.lastSnapshotIncludeIndex{%d} != lastLogjInde{%d}", logs_.size(),
+        last_snapshot_include_index_, last_log_index));
 }
 //执行一个command
 void Raft::start(Op command,int* new_log_index,int* new_log_term,bool* is_leader){

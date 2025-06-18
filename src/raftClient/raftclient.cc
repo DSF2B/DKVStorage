@@ -18,7 +18,6 @@ void RaftClient::init(std::string config_filename){
     }
     //连接每个raft节点
     for(const auto& item:ip_port_vt){
-
         std::string node_ip=item.first;
         short node_port = item.second;
         auto* rpc = new RaftServerRpcUtil(node_ip,node_port);
@@ -79,6 +78,14 @@ void RaftClient::putAppend(std::string key,std::string value,std::string op){
         raftKVRpcProtoc::PutAppendResponse response;
         bool ok=servers_[server]->putAppend(&request,&response);
         if(!ok || response.err() == ErrWrongLeader){
+            DPrintf("【Clerk::PutAppend】原以为的leader：{%d}请求失败，向新leader{%d}重试  ，操作：{%s}", server, server + 1,
+              op.c_str());
+            if (!ok) {
+                DPrintf("重试原因 ，rpc失敗 ，");
+            }
+            if (response.err() == ErrWrongLeader) {
+                DPrintf("重試原因：非leader");
+            }
             server=(server+1)%servers_.size();
             continue;
         }
@@ -87,8 +94,5 @@ void RaftClient::putAppend(std::string key,std::string value,std::string op){
             return ;
         }
     }
-    
-    
-
 }
 

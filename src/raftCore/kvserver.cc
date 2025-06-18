@@ -61,6 +61,7 @@ KvServer::KvServer(int me,int max_raft_state,std::string node_info_filename,shor
     skiplist_;
     wait_applychan_;
     last_request_id_;
+    last_snapshot_raftlog_index_ = 0;
     auto snapshot = persister->readSnapshot();
     if (!snapshot.empty()) {
         readSnapShotToInstall(snapshot);
@@ -77,7 +78,9 @@ void KvServer::dprintfKVDB(){
         return ;
     }
     std::lock_guard<std::mutex> lock(mtx_);
-    skiplist_.displayList();
+    DEFER {
+        skiplist_.displayList();
+    };
 }
 void KvServer::executePutOpOnKVDB(Op op){
     std::unique_lock<std::mutex> lock(mtx_);
@@ -102,6 +105,7 @@ void KvServer::executeGetOpOnKVDB(Op op, std::string *value, bool *exist){
     }
     last_request_id_[op.client_id_]=op.request_id_;
     lock.unlock();
+    dprintfKVDB();
 }
 //本地方法,处理来自client的get rpc，从
 void KvServer::get(const raftKVRpcProtoc::GetRequest *request,
@@ -171,6 +175,10 @@ void KvServer::get(const raftKVRpcProtoc::GetRequest *request,
                 response->set_err(ErrNoKey);
                 response->set_value("");
             }
+        }else {
+            response->set_err(ErrWrongLeader);
+            //            DPrintf("[GET ] 不满足：raftCommitOp.ClientId{%v} == op.ClientId{%v} && raftCommitOp.RequestId{%v}
+            //            == op.RequestId{%v}", raftCommitOp.ClientId, op.ClientId, raftCommitOp.RequestId, op.RequestId)
         }
     }
     //释放raftIndex的等待队列，删除该队列并解锁
@@ -205,12 +213,12 @@ void KvServer::putAppend(const raftKVRpcProtoc::PutAppendRequest *request,
         return;
     }
     DPrintf(
-      "[func -KvServer::PutAppend -kvserver{%d}]From Client %s (Request %d) To Server %d, key %s, raftIndex %d , is "
-      "leader ",
-      me_, &request->clientid(), request->requestid(), me_, &op.key_, raft_log_index);
+        "[func -KvServer::PutAppend -kvserver{%d}]From Client %s (Request %d) To Server %d, key %s, raftIndex %d , is "
+        "leader ",
+        me_, &request->clientid(), request->requestid(), me_, &op.key_, raft_log_index);
     std::unique_lock<std::mutex> lock(mtx_);
     if (wait_applychan_.find(raft_log_index) == wait_applychan_.end()) {
-    wait_applychan_.insert(std::make_pair(raft_log_index, new LockQueue<Op>()));
+        wait_applychan_.insert(std::make_pair(raft_log_index, new LockQueue<Op>()));
     }
     auto chForRaftIndex = wait_applychan_[raft_log_index];
     lock.unlock();  //直接解锁，等待任务执行完成，不能一直拿锁等待
@@ -218,9 +226,9 @@ void KvServer::putAppend(const raftKVRpcProtoc::PutAppendRequest *request,
     Op raftCommitOp;
     if(!chForRaftIndex->timeoutPop(CONSENSUS_TIMEOUT, &raftCommitOp)) {
         DPrintf(
-        "[func -KvServer::PutAppend -kvserver{%d}]TIMEOUT PUTAPPEND !!!! Server %d , get Command <-- Index:%d , "
-        "ClientId %s, RequestId %s, Opreation %s Key :%s, Value :%s",
-        me_, me_, raft_log_index, &op.client_id_, op.request_id_, &op.operation_, &op.key_, &op.value_);
+            "[func -KvServer::PutAppend -kvserver{%d}]TIMEOUT PUTAPPEND !!!! Server %d , get Command <-- Index:%d , "
+            "ClientId %s, RequestId %s, Opreation %s Key :%s, Value :%s",
+            me_, me_, raft_log_index, &op.client_id_, op.request_id_, &op.operation_, &op.key_, &op.value_);
         if(ifRequestDuplicate(op.client_id_, op.request_id_)) {
             response->set_err(OK);
         }else{
@@ -228,13 +236,14 @@ void KvServer::putAppend(const raftKVRpcProtoc::PutAppendRequest *request,
         }
     }else{
         DPrintf(
-        "[func -KvServer::PutAppend -kvserver{%d}]WaitChanGetRaftApplyMessage<--Server %d , get Command <-- Index:%d , "
-        "ClientId %s, RequestId %d, Opreation %s, Key :%s, Value :%s",
-        me_, me_, raft_log_index, &op.client_id_, op.request_id_, &op.operation_, &op.key_, &op.value_);
+            "[func -KvServer::PutAppend -kvserver{%d}]WaitChanGetRaftApplyMessage<--Server %d , get Command <-- Index:%d , "
+            "ClientId %s, RequestId %d, Opreation %s, Key :%s, Value :%s",
+            me_, me_, raft_log_index, &op.client_id_, op.request_id_, &op.operation_, &op.key_, &op.value_);
         if (raftCommitOp.client_id_ == op.client_id_ && raftCommitOp.request_id_ == op.request_id_) {
             //这里与get不同，在getCommandFromRaft执行了executePutOpOnKVDB,检查成功就行，即wait_chan里和op里一致
             response->set_err(OK);
-        }else{
+        }
+        else{
             response->set_err(ErrWrongLeader);
         }
     }
@@ -254,7 +263,7 @@ void KvServer::getCommandFromRaft(ApplyMsg message){
       "[KvServer::GetCommandFromRaft-kvserver{%d}] , Got Command --> Index:{%d} , ClientId {%s}, RequestId {%d}, "
       "Opreation {%s}, Key :{%s}, Value :{%s}",
       me_, message.command_index_, &op.client_id_, op.request_id_, &op.operation_, &op.key_, &op.value_);
-    if(message.command_index_ < last_snapshot_raftlog_index_){
+    if(message.command_index_ <= last_snapshot_raftlog_index_){
         return ;
     }
     //command是否重复,put和append不能重复
@@ -349,11 +358,12 @@ std::string KvServer::makeSnapShot(){
 
 void KvServer::PutAppend(google::protobuf::RpcController *controller, const ::raftKVRpcProtoc::PutAppendRequest *request,
     ::raftKVRpcProtoc::PutAppendResponse *response, ::google::protobuf::Closure *done){
-    putAppend(request,response);
+    KvServer::putAppend(request,response);
     done->Run();
 }
+
 void KvServer::Get(google::protobuf::RpcController *controller, const ::raftKVRpcProtoc::GetRequest *request,
     ::raftKVRpcProtoc::GetResponse *response, ::google::protobuf::Closure *done){
-    get(request,response);
+    KvServer::get(request,response);
     done->Run();
 }

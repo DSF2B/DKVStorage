@@ -3,8 +3,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/rpc_lib.dir/__/common/util.cc.o.d"
   "CMakeFiles/rpc_lib.dir/logger.cc.o"
   "CMakeFiles/rpc_lib.dir/logger.cc.o.d"
-  "CMakeFiles/rpc_lib.dir/mprpcapplication.cc.o"
-  "CMakeFiles/rpc_lib.dir/mprpcapplication.cc.o.d"
   "CMakeFiles/rpc_lib.dir/mprpcchannel.cc.o"
   "CMakeFiles/rpc_lib.dir/mprpcchannel.cc.o.d"
   "CMakeFiles/rpc_lib.dir/mprpcconfig.cc.o"

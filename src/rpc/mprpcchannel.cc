@@ -22,7 +22,6 @@ void MprpcChannel::CallMethod(
             return;
         }else{
             DPrintf("[func-MprpcChannel::CallMethod]连接ip：{%s} port{%d}成功", ip_.c_str(), port_);
-
         }
     }
     // 服务调用者调用callmethod，callmethod内部完成序列化和反序列化以及网络通信
@@ -84,7 +83,7 @@ void MprpcChannel::CallMethod(
         std::cout << "send error!errno:" << errno << std::endl;
         char errtext[512] = {0};
         sprintf(errtext,"send error!errno:%d",errno);
-        controller->SetFailed(errtext);
+        std::cout << "尝试重新连接，对方ip：" << ip_ << " 对方端口" << port_ << std::endl;
         close(client_fd_);
         client_fd_=-1;
         std::string errMsg;
@@ -114,14 +113,15 @@ void MprpcChannel::CallMethod(
     // std::string response_str(recv_buf, 0, recv_size);//recv_buf遇到\0，后面的数据就无法读取了
     
     if (!response->ParseFromArray(recv_buf,recv_size))
-    { // response反序列化
-        //失败
+    {   // response反序列化
+        // 失败
         // std::cout << "parse error! response_str:" << recv_buf << std::endl;
         char errtext[2048] = {0};
         sprintf(errtext,"parse error! response_str:%s",recv_buf);
         controller->SetFailed(errtext);
         return;
     }
+    std::cout<<"channel exit normal"<<std::endl;
 }
 
 bool MprpcChannel::newConnect(const char* ip,uint16_t port, std::string* errMsg)

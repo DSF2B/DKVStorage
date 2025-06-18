@@ -19,8 +19,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/skip_list_on_raft.dir/src/raftRpc/raftrpc.pb.cc.o.d"
   "CMakeFiles/skip_list_on_raft.dir/src/rpc/logger.cc.o"
   "CMakeFiles/skip_list_on_raft.dir/src/rpc/logger.cc.o.d"
-  "CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcapplication.cc.o"
-  "CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcapplication.cc.o.d"
   "CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcchannel.cc.o"
   "CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcchannel.cc.o.d"
   "CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcconfig.cc.o"

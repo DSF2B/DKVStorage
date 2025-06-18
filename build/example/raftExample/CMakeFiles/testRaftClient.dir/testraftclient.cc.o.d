@@ -280,9 +280,6 @@ example/raftExample/CMakeFiles/testRaftClient.dir/testraftclient.cc.o: \
  /usr/include/c++/11/cassert /usr/local/include/google/protobuf/service.h \
  /home/zilu/桌面/DKVStorage/src/raftClient/include/raftserverrpcutil.h \
  /home/zilu/桌面/DKVStorage/src/rpc/include/mprpcchannel.h \
- /home/zilu/桌面/DKVStorage/src/rpc/include/mprpcapplication.h \
- /home/zilu/桌面/DKVStorage/src/rpc/include/mprpcconfig.h \
- /home/zilu/桌面/DKVStorage/src/rpc/include/mprpccontroller.h \
  /home/zilu/桌面/DKVStorage/src/rpc/include/rpcheader.pb.h \
  /usr/include/x86_64-linux-gnu/sys/socket.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h \
@@ -752,4 +749,5 @@ example/raftExample/CMakeFiles/testRaftClient.dir/testraftclient.cc.o: \
  /usr/include/rpc/netdb.h \
  /usr/include/x86_64-linux-gnu/bits/types/sigevent_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__sigval_t.h \
- /usr/include/x86_64-linux-gnu/bits/netdb.h
+ /usr/include/x86_64-linux-gnu/bits/netdb.h \
+ /home/zilu/桌面/DKVStorage/src/rpc/include/mprpcconfig.h

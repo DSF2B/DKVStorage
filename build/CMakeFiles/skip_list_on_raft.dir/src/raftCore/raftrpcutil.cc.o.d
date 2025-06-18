@@ -282,9 +282,6 @@ CMakeFiles/skip_list_on_raft.dir/src/raftCore/raftrpcutil.cc.o: \
  /usr/local/include/google/protobuf/extension_set.h \
  /usr/include/c++/11/cassert /usr/local/include/google/protobuf/service.h \
  /home/zilu/桌面/DKVStorage/src/rpc/include/mprpcchannel.h \
- /home/zilu/桌面/DKVStorage/src/rpc/include/mprpcapplication.h \
- /home/zilu/桌面/DKVStorage/src/rpc/include/mprpcconfig.h \
- /home/zilu/桌面/DKVStorage/src/rpc/include/mprpccontroller.h \
  /home/zilu/桌面/DKVStorage/src/rpc/include/rpcheader.pb.h \
  /usr/include/x86_64-linux-gnu/sys/socket.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h \
@@ -718,4 +715,5 @@ CMakeFiles/skip_list_on_raft.dir/src/raftCore/raftrpcutil.cc.o: \
  /usr/include/c++/11/deque /usr/include/c++/11/bits/stl_deque.h \
  /usr/include/c++/11/bits/deque.tcc /usr/include/c++/11/bits/stl_queue.h \
  /usr/include/c++/11/thread \
- /home/zilu/桌面/DKVStorage/src/common/include/config.h
+ /home/zilu/桌面/DKVStorage/src/common/include/config.h \
+ /home/zilu/桌面/DKVStorage/src/rpc/include/mprpccontroller.h

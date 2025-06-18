@@ -16,24 +16,20 @@
 #include <iostream>
 #include <sstream>
 #include "config.h" 
-// template<class T>
-// class DeferClass {
-// public:
-//     // 构造函数，用于接受一个通用的函数对象
-//     DeferClass(T&& func) : func_(std::forward<T>(func)) {}
+template <class F>
+class DeferClass {
+ public:
+  DeferClass(F&& f) : m_func(std::forward<F>(f)) {}
+  DeferClass(const F& f) : m_func(f) {}
+  ~DeferClass() { m_func(); }
 
-//     // 构造函数，用于接受成员函数指针
-//     template<class C>
-//     explicit DeferClass(C* obj, void (C::*func)()) {
-//         func_ = [obj, func]() { (obj->*func)(); };
-//     }
+  DeferClass(const DeferClass& e) = delete;
+  DeferClass& operator=(const DeferClass& e) = delete;
 
-//     // 析构函数调用延迟的函数
-//     ~DeferClass() { func_(); }
+ private:
+  F m_func;
+};
 
-// private:
-//     std::function<void()> func_;
-// };
 
 #define _CONCAT(a, b) a##b
 #define _MAKE_DEFER_(line) DeferClass _CONCAT(defer_placeholder, line) = [&]()

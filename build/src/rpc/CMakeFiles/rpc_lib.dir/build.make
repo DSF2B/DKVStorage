@@ -83,24 +83,10 @@ src/rpc/CMakeFiles/rpc_lib.dir/logger.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/rpc_lib.dir/logger.cc.s"
 	cd /home/zilu/桌面/DKVStorage/build/src/rpc && /usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/zilu/桌面/DKVStorage/src/rpc/logger.cc -o CMakeFiles/rpc_lib.dir/logger.cc.s
 
-src/rpc/CMakeFiles/rpc_lib.dir/mprpcapplication.cc.o: src/rpc/CMakeFiles/rpc_lib.dir/flags.make
-src/rpc/CMakeFiles/rpc_lib.dir/mprpcapplication.cc.o: ../src/rpc/mprpcapplication.cc
-src/rpc/CMakeFiles/rpc_lib.dir/mprpcapplication.cc.o: src/rpc/CMakeFiles/rpc_lib.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object src/rpc/CMakeFiles/rpc_lib.dir/mprpcapplication.cc.o"
-	cd /home/zilu/桌面/DKVStorage/build/src/rpc && /usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/rpc/CMakeFiles/rpc_lib.dir/mprpcapplication.cc.o -MF CMakeFiles/rpc_lib.dir/mprpcapplication.cc.o.d -o CMakeFiles/rpc_lib.dir/mprpcapplication.cc.o -c /home/zilu/桌面/DKVStorage/src/rpc/mprpcapplication.cc
-
-src/rpc/CMakeFiles/rpc_lib.dir/mprpcapplication.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/rpc_lib.dir/mprpcapplication.cc.i"
-	cd /home/zilu/桌面/DKVStorage/build/src/rpc && /usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/zilu/桌面/DKVStorage/src/rpc/mprpcapplication.cc > CMakeFiles/rpc_lib.dir/mprpcapplication.cc.i
-
-src/rpc/CMakeFiles/rpc_lib.dir/mprpcapplication.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/rpc_lib.dir/mprpcapplication.cc.s"
-	cd /home/zilu/桌面/DKVStorage/build/src/rpc && /usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/zilu/桌面/DKVStorage/src/rpc/mprpcapplication.cc -o CMakeFiles/rpc_lib.dir/mprpcapplication.cc.s
-
 src/rpc/CMakeFiles/rpc_lib.dir/mprpcchannel.cc.o: src/rpc/CMakeFiles/rpc_lib.dir/flags.make
 src/rpc/CMakeFiles/rpc_lib.dir/mprpcchannel.cc.o: ../src/rpc/mprpcchannel.cc
 src/rpc/CMakeFiles/rpc_lib.dir/mprpcchannel.cc.o: src/rpc/CMakeFiles/rpc_lib.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object src/rpc/CMakeFiles/rpc_lib.dir/mprpcchannel.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object src/rpc/CMakeFiles/rpc_lib.dir/mprpcchannel.cc.o"
 	cd /home/zilu/桌面/DKVStorage/build/src/rpc && /usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/rpc/CMakeFiles/rpc_lib.dir/mprpcchannel.cc.o -MF CMakeFiles/rpc_lib.dir/mprpcchannel.cc.o.d -o CMakeFiles/rpc_lib.dir/mprpcchannel.cc.o -c /home/zilu/桌面/DKVStorage/src/rpc/mprpcchannel.cc
 
 src/rpc/CMakeFiles/rpc_lib.dir/mprpcchannel.cc.i: cmake_force
@@ -114,7 +100,7 @@ src/rpc/CMakeFiles/rpc_lib.dir/mprpcchannel.cc.s: cmake_force
 src/rpc/CMakeFiles/rpc_lib.dir/mprpcconfig.cc.o: src/rpc/CMakeFiles/rpc_lib.dir/flags.make
 src/rpc/CMakeFiles/rpc_lib.dir/mprpcconfig.cc.o: ../src/rpc/mprpcconfig.cc
 src/rpc/CMakeFiles/rpc_lib.dir/mprpcconfig.cc.o: src/rpc/CMakeFiles/rpc_lib.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object src/rpc/CMakeFiles/rpc_lib.dir/mprpcconfig.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object src/rpc/CMakeFiles/rpc_lib.dir/mprpcconfig.cc.o"
 	cd /home/zilu/桌面/DKVStorage/build/src/rpc && /usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/rpc/CMakeFiles/rpc_lib.dir/mprpcconfig.cc.o -MF CMakeFiles/rpc_lib.dir/mprpcconfig.cc.o.d -o CMakeFiles/rpc_lib.dir/mprpcconfig.cc.o -c /home/zilu/桌面/DKVStorage/src/rpc/mprpcconfig.cc
 
 src/rpc/CMakeFiles/rpc_lib.dir/mprpcconfig.cc.i: cmake_force
@@ -128,7 +114,7 @@ src/rpc/CMakeFiles/rpc_lib.dir/mprpcconfig.cc.s: cmake_force
 src/rpc/CMakeFiles/rpc_lib.dir/mprpccontroller.cc.o: src/rpc/CMakeFiles/rpc_lib.dir/flags.make
 src/rpc/CMakeFiles/rpc_lib.dir/mprpccontroller.cc.o: ../src/rpc/mprpccontroller.cc
 src/rpc/CMakeFiles/rpc_lib.dir/mprpccontroller.cc.o: src/rpc/CMakeFiles/rpc_lib.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object src/rpc/CMakeFiles/rpc_lib.dir/mprpccontroller.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object src/rpc/CMakeFiles/rpc_lib.dir/mprpccontroller.cc.o"
 	cd /home/zilu/桌面/DKVStorage/build/src/rpc && /usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/rpc/CMakeFiles/rpc_lib.dir/mprpccontroller.cc.o -MF CMakeFiles/rpc_lib.dir/mprpccontroller.cc.o.d -o CMakeFiles/rpc_lib.dir/mprpccontroller.cc.o -c /home/zilu/桌面/DKVStorage/src/rpc/mprpccontroller.cc
 
 src/rpc/CMakeFiles/rpc_lib.dir/mprpccontroller.cc.i: cmake_force
@@ -142,7 +128,7 @@ src/rpc/CMakeFiles/rpc_lib.dir/mprpccontroller.cc.s: cmake_force
 src/rpc/CMakeFiles/rpc_lib.dir/rpcheader.pb.cc.o: src/rpc/CMakeFiles/rpc_lib.dir/flags.make
 src/rpc/CMakeFiles/rpc_lib.dir/rpcheader.pb.cc.o: ../src/rpc/rpcheader.pb.cc
 src/rpc/CMakeFiles/rpc_lib.dir/rpcheader.pb.cc.o: src/rpc/CMakeFiles/rpc_lib.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object src/rpc/CMakeFiles/rpc_lib.dir/rpcheader.pb.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object src/rpc/CMakeFiles/rpc_lib.dir/rpcheader.pb.cc.o"
 	cd /home/zilu/桌面/DKVStorage/build/src/rpc && /usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/rpc/CMakeFiles/rpc_lib.dir/rpcheader.pb.cc.o -MF CMakeFiles/rpc_lib.dir/rpcheader.pb.cc.o.d -o CMakeFiles/rpc_lib.dir/rpcheader.pb.cc.o -c /home/zilu/桌面/DKVStorage/src/rpc/rpcheader.pb.cc
 
 src/rpc/CMakeFiles/rpc_lib.dir/rpcheader.pb.cc.i: cmake_force
@@ -156,7 +142,7 @@ src/rpc/CMakeFiles/rpc_lib.dir/rpcheader.pb.cc.s: cmake_force
 src/rpc/CMakeFiles/rpc_lib.dir/rpcprovider.cc.o: src/rpc/CMakeFiles/rpc_lib.dir/flags.make
 src/rpc/CMakeFiles/rpc_lib.dir/rpcprovider.cc.o: ../src/rpc/rpcprovider.cc
 src/rpc/CMakeFiles/rpc_lib.dir/rpcprovider.cc.o: src/rpc/CMakeFiles/rpc_lib.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object src/rpc/CMakeFiles/rpc_lib.dir/rpcprovider.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object src/rpc/CMakeFiles/rpc_lib.dir/rpcprovider.cc.o"
 	cd /home/zilu/桌面/DKVStorage/build/src/rpc && /usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/rpc/CMakeFiles/rpc_lib.dir/rpcprovider.cc.o -MF CMakeFiles/rpc_lib.dir/rpcprovider.cc.o.d -o CMakeFiles/rpc_lib.dir/rpcprovider.cc.o -c /home/zilu/桌面/DKVStorage/src/rpc/rpcprovider.cc
 
 src/rpc/CMakeFiles/rpc_lib.dir/rpcprovider.cc.i: cmake_force
@@ -170,7 +156,7 @@ src/rpc/CMakeFiles/rpc_lib.dir/rpcprovider.cc.s: cmake_force
 src/rpc/CMakeFiles/rpc_lib.dir/__/common/util.cc.o: src/rpc/CMakeFiles/rpc_lib.dir/flags.make
 src/rpc/CMakeFiles/rpc_lib.dir/__/common/util.cc.o: ../src/common/util.cc
 src/rpc/CMakeFiles/rpc_lib.dir/__/common/util.cc.o: src/rpc/CMakeFiles/rpc_lib.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object src/rpc/CMakeFiles/rpc_lib.dir/__/common/util.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object src/rpc/CMakeFiles/rpc_lib.dir/__/common/util.cc.o"
 	cd /home/zilu/桌面/DKVStorage/build/src/rpc && /usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/rpc/CMakeFiles/rpc_lib.dir/__/common/util.cc.o -MF CMakeFiles/rpc_lib.dir/__/common/util.cc.o.d -o CMakeFiles/rpc_lib.dir/__/common/util.cc.o -c /home/zilu/桌面/DKVStorage/src/common/util.cc
 
 src/rpc/CMakeFiles/rpc_lib.dir/__/common/util.cc.i: cmake_force
@@ -184,7 +170,6 @@ src/rpc/CMakeFiles/rpc_lib.dir/__/common/util.cc.s: cmake_force
 # Object files for target rpc_lib
 rpc_lib_OBJECTS = \
 "CMakeFiles/rpc_lib.dir/logger.cc.o" \
-"CMakeFiles/rpc_lib.dir/mprpcapplication.cc.o" \
 "CMakeFiles/rpc_lib.dir/mprpcchannel.cc.o" \
 "CMakeFiles/rpc_lib.dir/mprpcconfig.cc.o" \
 "CMakeFiles/rpc_lib.dir/mprpccontroller.cc.o" \
@@ -196,7 +181,6 @@ rpc_lib_OBJECTS = \
 rpc_lib_EXTERNAL_OBJECTS =
 
 src/rpc/librpc_lib.a: src/rpc/CMakeFiles/rpc_lib.dir/logger.cc.o
-src/rpc/librpc_lib.a: src/rpc/CMakeFiles/rpc_lib.dir/mprpcapplication.cc.o
 src/rpc/librpc_lib.a: src/rpc/CMakeFiles/rpc_lib.dir/mprpcchannel.cc.o
 src/rpc/librpc_lib.a: src/rpc/CMakeFiles/rpc_lib.dir/mprpcconfig.cc.o
 src/rpc/librpc_lib.a: src/rpc/CMakeFiles/rpc_lib.dir/mprpccontroller.cc.o
@@ -205,7 +189,7 @@ src/rpc/librpc_lib.a: src/rpc/CMakeFiles/rpc_lib.dir/rpcprovider.cc.o
 src/rpc/librpc_lib.a: src/rpc/CMakeFiles/rpc_lib.dir/__/common/util.cc.o
 src/rpc/librpc_lib.a: src/rpc/CMakeFiles/rpc_lib.dir/build.make
 src/rpc/librpc_lib.a: src/rpc/CMakeFiles/rpc_lib.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX static library librpc_lib.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking CXX static library librpc_lib.a"
 	cd /home/zilu/桌面/DKVStorage/build/src/rpc && $(CMAKE_COMMAND) -P CMakeFiles/rpc_lib.dir/cmake_clean_target.cmake
 	cd /home/zilu/桌面/DKVStorage/build/src/rpc && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/rpc_lib.dir/link.txt --verbose=$(VERBOSE)
 

@@ -178,30 +178,6 @@ logger.cc.s:
 	cd /home/zilu/桌面/DKVStorage/build && $(MAKE) $(MAKESILENT) -f src/rpc/CMakeFiles/rpc_lib.dir/build.make src/rpc/CMakeFiles/rpc_lib.dir/logger.cc.s
 .PHONY : logger.cc.s
 
-mprpcapplication.o: mprpcapplication.cc.o
-.PHONY : mprpcapplication.o
-
-# target to build an object file
-mprpcapplication.cc.o:
-	cd /home/zilu/桌面/DKVStorage/build && $(MAKE) $(MAKESILENT) -f src/rpc/CMakeFiles/rpc_lib.dir/build.make src/rpc/CMakeFiles/rpc_lib.dir/mprpcapplication.cc.o
-.PHONY : mprpcapplication.cc.o
-
-mprpcapplication.i: mprpcapplication.cc.i
-.PHONY : mprpcapplication.i
-
-# target to preprocess a source file
-mprpcapplication.cc.i:
-	cd /home/zilu/桌面/DKVStorage/build && $(MAKE) $(MAKESILENT) -f src/rpc/CMakeFiles/rpc_lib.dir/build.make src/rpc/CMakeFiles/rpc_lib.dir/mprpcapplication.cc.i
-.PHONY : mprpcapplication.cc.i
-
-mprpcapplication.s: mprpcapplication.cc.s
-.PHONY : mprpcapplication.s
-
-# target to generate assembly for a file
-mprpcapplication.cc.s:
-	cd /home/zilu/桌面/DKVStorage/build && $(MAKE) $(MAKESILENT) -f src/rpc/CMakeFiles/rpc_lib.dir/build.make src/rpc/CMakeFiles/rpc_lib.dir/mprpcapplication.cc.s
-.PHONY : mprpcapplication.cc.s
-
 mprpcchannel.o: mprpcchannel.cc.o
 .PHONY : mprpcchannel.o
 
@@ -337,9 +313,6 @@ help:
 	@echo "... logger.o"
 	@echo "... logger.i"
 	@echo "... logger.s"
-	@echo "... mprpcapplication.o"
-	@echo "... mprpcapplication.i"
-	@echo "... mprpcapplication.s"
 	@echo "... mprpcchannel.o"
 	@echo "... mprpcchannel.i"
 	@echo "... mprpcchannel.s"

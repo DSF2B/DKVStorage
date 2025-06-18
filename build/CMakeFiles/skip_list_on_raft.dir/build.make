@@ -97,24 +97,10 @@ CMakeFiles/skip_list_on_raft.dir/src/rpc/logger.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/skip_list_on_raft.dir/src/rpc/logger.cc.s"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/zilu/桌面/DKVStorage/src/rpc/logger.cc -o CMakeFiles/skip_list_on_raft.dir/src/rpc/logger.cc.s
 
-CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcapplication.cc.o: CMakeFiles/skip_list_on_raft.dir/flags.make
-CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcapplication.cc.o: ../src/rpc/mprpcapplication.cc
-CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcapplication.cc.o: CMakeFiles/skip_list_on_raft.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcapplication.cc.o"
-	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcapplication.cc.o -MF CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcapplication.cc.o.d -o CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcapplication.cc.o -c /home/zilu/桌面/DKVStorage/src/rpc/mprpcapplication.cc
-
-CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcapplication.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcapplication.cc.i"
-	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/zilu/桌面/DKVStorage/src/rpc/mprpcapplication.cc > CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcapplication.cc.i
-
-CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcapplication.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcapplication.cc.s"
-	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/zilu/桌面/DKVStorage/src/rpc/mprpcapplication.cc -o CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcapplication.cc.s
-
 CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcchannel.cc.o: CMakeFiles/skip_list_on_raft.dir/flags.make
 CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcchannel.cc.o: ../src/rpc/mprpcchannel.cc
 CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcchannel.cc.o: CMakeFiles/skip_list_on_raft.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcchannel.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcchannel.cc.o"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcchannel.cc.o -MF CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcchannel.cc.o.d -o CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcchannel.cc.o -c /home/zilu/桌面/DKVStorage/src/rpc/mprpcchannel.cc
 
 CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcchannel.cc.i: cmake_force
@@ -128,7 +114,7 @@ CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcchannel.cc.s: cmake_force
 CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcconfig.cc.o: CMakeFiles/skip_list_on_raft.dir/flags.make
 CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcconfig.cc.o: ../src/rpc/mprpcconfig.cc
 CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcconfig.cc.o: CMakeFiles/skip_list_on_raft.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcconfig.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcconfig.cc.o"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcconfig.cc.o -MF CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcconfig.cc.o.d -o CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcconfig.cc.o -c /home/zilu/桌面/DKVStorage/src/rpc/mprpcconfig.cc
 
 CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcconfig.cc.i: cmake_force
@@ -142,7 +128,7 @@ CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcconfig.cc.s: cmake_force
 CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpccontroller.cc.o: CMakeFiles/skip_list_on_raft.dir/flags.make
 CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpccontroller.cc.o: ../src/rpc/mprpccontroller.cc
 CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpccontroller.cc.o: CMakeFiles/skip_list_on_raft.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpccontroller.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpccontroller.cc.o"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpccontroller.cc.o -MF CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpccontroller.cc.o.d -o CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpccontroller.cc.o -c /home/zilu/桌面/DKVStorage/src/rpc/mprpccontroller.cc
 
 CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpccontroller.cc.i: cmake_force
@@ -156,7 +142,7 @@ CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpccontroller.cc.s: cmake_force
 CMakeFiles/skip_list_on_raft.dir/src/rpc/rpcheader.pb.cc.o: CMakeFiles/skip_list_on_raft.dir/flags.make
 CMakeFiles/skip_list_on_raft.dir/src/rpc/rpcheader.pb.cc.o: ../src/rpc/rpcheader.pb.cc
 CMakeFiles/skip_list_on_raft.dir/src/rpc/rpcheader.pb.cc.o: CMakeFiles/skip_list_on_raft.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/rpc/rpcheader.pb.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/rpc/rpcheader.pb.cc.o"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/skip_list_on_raft.dir/src/rpc/rpcheader.pb.cc.o -MF CMakeFiles/skip_list_on_raft.dir/src/rpc/rpcheader.pb.cc.o.d -o CMakeFiles/skip_list_on_raft.dir/src/rpc/rpcheader.pb.cc.o -c /home/zilu/桌面/DKVStorage/src/rpc/rpcheader.pb.cc
 
 CMakeFiles/skip_list_on_raft.dir/src/rpc/rpcheader.pb.cc.i: cmake_force
@@ -170,7 +156,7 @@ CMakeFiles/skip_list_on_raft.dir/src/rpc/rpcheader.pb.cc.s: cmake_force
 CMakeFiles/skip_list_on_raft.dir/src/rpc/rpcprovider.cc.o: CMakeFiles/skip_list_on_raft.dir/flags.make
 CMakeFiles/skip_list_on_raft.dir/src/rpc/rpcprovider.cc.o: ../src/rpc/rpcprovider.cc
 CMakeFiles/skip_list_on_raft.dir/src/rpc/rpcprovider.cc.o: CMakeFiles/skip_list_on_raft.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/rpc/rpcprovider.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/rpc/rpcprovider.cc.o"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/skip_list_on_raft.dir/src/rpc/rpcprovider.cc.o -MF CMakeFiles/skip_list_on_raft.dir/src/rpc/rpcprovider.cc.o.d -o CMakeFiles/skip_list_on_raft.dir/src/rpc/rpcprovider.cc.o -c /home/zilu/桌面/DKVStorage/src/rpc/rpcprovider.cc
 
 CMakeFiles/skip_list_on_raft.dir/src/rpc/rpcprovider.cc.i: cmake_force
@@ -184,7 +170,7 @@ CMakeFiles/skip_list_on_raft.dir/src/rpc/rpcprovider.cc.s: cmake_force
 CMakeFiles/skip_list_on_raft.dir/src/raftCore/kvserver.cc.o: CMakeFiles/skip_list_on_raft.dir/flags.make
 CMakeFiles/skip_list_on_raft.dir/src/raftCore/kvserver.cc.o: ../src/raftCore/kvserver.cc
 CMakeFiles/skip_list_on_raft.dir/src/raftCore/kvserver.cc.o: CMakeFiles/skip_list_on_raft.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/raftCore/kvserver.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/raftCore/kvserver.cc.o"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/skip_list_on_raft.dir/src/raftCore/kvserver.cc.o -MF CMakeFiles/skip_list_on_raft.dir/src/raftCore/kvserver.cc.o.d -o CMakeFiles/skip_list_on_raft.dir/src/raftCore/kvserver.cc.o -c /home/zilu/桌面/DKVStorage/src/raftCore/kvserver.cc
 
 CMakeFiles/skip_list_on_raft.dir/src/raftCore/kvserver.cc.i: cmake_force
@@ -198,7 +184,7 @@ CMakeFiles/skip_list_on_raft.dir/src/raftCore/kvserver.cc.s: cmake_force
 CMakeFiles/skip_list_on_raft.dir/src/raftCore/persister.cc.o: CMakeFiles/skip_list_on_raft.dir/flags.make
 CMakeFiles/skip_list_on_raft.dir/src/raftCore/persister.cc.o: ../src/raftCore/persister.cc
 CMakeFiles/skip_list_on_raft.dir/src/raftCore/persister.cc.o: CMakeFiles/skip_list_on_raft.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/raftCore/persister.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/raftCore/persister.cc.o"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/skip_list_on_raft.dir/src/raftCore/persister.cc.o -MF CMakeFiles/skip_list_on_raft.dir/src/raftCore/persister.cc.o.d -o CMakeFiles/skip_list_on_raft.dir/src/raftCore/persister.cc.o -c /home/zilu/桌面/DKVStorage/src/raftCore/persister.cc
 
 CMakeFiles/skip_list_on_raft.dir/src/raftCore/persister.cc.i: cmake_force
@@ -212,7 +198,7 @@ CMakeFiles/skip_list_on_raft.dir/src/raftCore/persister.cc.s: cmake_force
 CMakeFiles/skip_list_on_raft.dir/src/raftCore/raft.cc.o: CMakeFiles/skip_list_on_raft.dir/flags.make
 CMakeFiles/skip_list_on_raft.dir/src/raftCore/raft.cc.o: ../src/raftCore/raft.cc
 CMakeFiles/skip_list_on_raft.dir/src/raftCore/raft.cc.o: CMakeFiles/skip_list_on_raft.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/raftCore/raft.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/raftCore/raft.cc.o"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/skip_list_on_raft.dir/src/raftCore/raft.cc.o -MF CMakeFiles/skip_list_on_raft.dir/src/raftCore/raft.cc.o.d -o CMakeFiles/skip_list_on_raft.dir/src/raftCore/raft.cc.o -c /home/zilu/桌面/DKVStorage/src/raftCore/raft.cc
 
 CMakeFiles/skip_list_on_raft.dir/src/raftCore/raft.cc.i: cmake_force
@@ -226,7 +212,7 @@ CMakeFiles/skip_list_on_raft.dir/src/raftCore/raft.cc.s: cmake_force
 CMakeFiles/skip_list_on_raft.dir/src/raftCore/raftrpcutil.cc.o: CMakeFiles/skip_list_on_raft.dir/flags.make
 CMakeFiles/skip_list_on_raft.dir/src/raftCore/raftrpcutil.cc.o: ../src/raftCore/raftrpcutil.cc
 CMakeFiles/skip_list_on_raft.dir/src/raftCore/raftrpcutil.cc.o: CMakeFiles/skip_list_on_raft.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/raftCore/raftrpcutil.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/raftCore/raftrpcutil.cc.o"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/skip_list_on_raft.dir/src/raftCore/raftrpcutil.cc.o -MF CMakeFiles/skip_list_on_raft.dir/src/raftCore/raftrpcutil.cc.o.d -o CMakeFiles/skip_list_on_raft.dir/src/raftCore/raftrpcutil.cc.o -c /home/zilu/桌面/DKVStorage/src/raftCore/raftrpcutil.cc
 
 CMakeFiles/skip_list_on_raft.dir/src/raftCore/raftrpcutil.cc.i: cmake_force
@@ -240,7 +226,7 @@ CMakeFiles/skip_list_on_raft.dir/src/raftCore/raftrpcutil.cc.s: cmake_force
 CMakeFiles/skip_list_on_raft.dir/src/raftRpc/kvserverrpc.pb.cc.o: CMakeFiles/skip_list_on_raft.dir/flags.make
 CMakeFiles/skip_list_on_raft.dir/src/raftRpc/kvserverrpc.pb.cc.o: ../src/raftRpc/kvserverrpc.pb.cc
 CMakeFiles/skip_list_on_raft.dir/src/raftRpc/kvserverrpc.pb.cc.o: CMakeFiles/skip_list_on_raft.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/raftRpc/kvserverrpc.pb.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/raftRpc/kvserverrpc.pb.cc.o"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/skip_list_on_raft.dir/src/raftRpc/kvserverrpc.pb.cc.o -MF CMakeFiles/skip_list_on_raft.dir/src/raftRpc/kvserverrpc.pb.cc.o.d -o CMakeFiles/skip_list_on_raft.dir/src/raftRpc/kvserverrpc.pb.cc.o -c /home/zilu/桌面/DKVStorage/src/raftRpc/kvserverrpc.pb.cc
 
 CMakeFiles/skip_list_on_raft.dir/src/raftRpc/kvserverrpc.pb.cc.i: cmake_force
@@ -254,7 +240,7 @@ CMakeFiles/skip_list_on_raft.dir/src/raftRpc/kvserverrpc.pb.cc.s: cmake_force
 CMakeFiles/skip_list_on_raft.dir/src/raftRpc/raftrpc.pb.cc.o: CMakeFiles/skip_list_on_raft.dir/flags.make
 CMakeFiles/skip_list_on_raft.dir/src/raftRpc/raftrpc.pb.cc.o: ../src/raftRpc/raftrpc.pb.cc
 CMakeFiles/skip_list_on_raft.dir/src/raftRpc/raftrpc.pb.cc.o: CMakeFiles/skip_list_on_raft.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/raftRpc/raftrpc.pb.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/raftRpc/raftrpc.pb.cc.o"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/skip_list_on_raft.dir/src/raftRpc/raftrpc.pb.cc.o -MF CMakeFiles/skip_list_on_raft.dir/src/raftRpc/raftrpc.pb.cc.o.d -o CMakeFiles/skip_list_on_raft.dir/src/raftRpc/raftrpc.pb.cc.o -c /home/zilu/桌面/DKVStorage/src/raftRpc/raftrpc.pb.cc
 
 CMakeFiles/skip_list_on_raft.dir/src/raftRpc/raftrpc.pb.cc.i: cmake_force
@@ -268,7 +254,7 @@ CMakeFiles/skip_list_on_raft.dir/src/raftRpc/raftrpc.pb.cc.s: cmake_force
 CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftclient.cc.o: CMakeFiles/skip_list_on_raft.dir/flags.make
 CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftclient.cc.o: ../src/raftClient/raftclient.cc
 CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftclient.cc.o: CMakeFiles/skip_list_on_raft.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftclient.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftclient.cc.o"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftclient.cc.o -MF CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftclient.cc.o.d -o CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftclient.cc.o -c /home/zilu/桌面/DKVStorage/src/raftClient/raftclient.cc
 
 CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftclient.cc.i: cmake_force
@@ -282,7 +268,7 @@ CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftclient.cc.s: cmake_force
 CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftserverrpcutil.cc.o: CMakeFiles/skip_list_on_raft.dir/flags.make
 CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftserverrpcutil.cc.o: ../src/raftClient/raftserverrpcutil.cc
 CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftserverrpcutil.cc.o: CMakeFiles/skip_list_on_raft.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftserverrpcutil.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftserverrpcutil.cc.o"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftserverrpcutil.cc.o -MF CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftserverrpcutil.cc.o.d -o CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftserverrpcutil.cc.o -c /home/zilu/桌面/DKVStorage/src/raftClient/raftserverrpcutil.cc
 
 CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftserverrpcutil.cc.i: cmake_force
@@ -297,7 +283,6 @@ CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftserverrpcutil.cc.s: cmake_fo
 skip_list_on_raft_OBJECTS = \
 "CMakeFiles/skip_list_on_raft.dir/src/common/util.cc.o" \
 "CMakeFiles/skip_list_on_raft.dir/src/rpc/logger.cc.o" \
-"CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcapplication.cc.o" \
 "CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcchannel.cc.o" \
 "CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcconfig.cc.o" \
 "CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpccontroller.cc.o" \
@@ -317,7 +302,6 @@ skip_list_on_raft_EXTERNAL_OBJECTS =
 
 libskip_list_on_raft.a: CMakeFiles/skip_list_on_raft.dir/src/common/util.cc.o
 libskip_list_on_raft.a: CMakeFiles/skip_list_on_raft.dir/src/rpc/logger.cc.o
-libskip_list_on_raft.a: CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcapplication.cc.o
 libskip_list_on_raft.a: CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcchannel.cc.o
 libskip_list_on_raft.a: CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcconfig.cc.o
 libskip_list_on_raft.a: CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpccontroller.cc.o
@@ -333,7 +317,7 @@ libskip_list_on_raft.a: CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftclie
 libskip_list_on_raft.a: CMakeFiles/skip_list_on_raft.dir/src/raftClient/raftserverrpcutil.cc.o
 libskip_list_on_raft.a: CMakeFiles/skip_list_on_raft.dir/build.make
 libskip_list_on_raft.a: CMakeFiles/skip_list_on_raft.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Linking CXX static library libskip_list_on_raft.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/zilu/桌面/DKVStorage/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Linking CXX static library libskip_list_on_raft.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/skip_list_on_raft.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/skip_list_on_raft.dir/link.txt --verbose=$(VERBOSE)
 

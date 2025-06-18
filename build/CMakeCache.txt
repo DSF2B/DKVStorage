@@ -99,9 +99,6 @@ CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 //No help, variable specified on the command line.
 CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE
 
-//Value Computed by CMake.
-CMAKE_FIND_PACKAGE_REDIRECTS_DIR:STATIC=/home/zilu/桌面/DKVStorage/build/CMakeFiles/pkgRedirects
-
 //Install path prefix, prepended onto install directories.
 CMAKE_INSTALL_PREFIX:PATH=/usr/local
 
@@ -219,9 +216,6 @@ DKVStorage_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
 DKVStorage_SOURCE_DIR:STATIC=/home/zilu/桌面/DKVStorage
-
-//Dependencies for the target
-fiber_lib_LIB_DEPENDS:STATIC=general;-ldl;
 
 
 ########################
@@ -369,12 +363,8 @@ CMAKE_STRIP-ADVANCED:INTERNAL=1
 CMAKE_UNAME:INTERNAL=/usr/bin/uname
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
-//linker supports push/pop state
-_CMAKE_LINKER_PUSHPOP_STATE_SUPPORTED:INTERNAL=TRUE
 //Description of the variable
 src_common:INTERNAL=/home/zilu/桌面/DKVStorage/src/common/util.cc
-//Description of the variable
-src_fiber:INTERNAL=/home/zilu/桌面/DKVStorage/src/fiber/fd_manager.cpp;/home/zilu/桌面/DKVStorage/src/fiber/fiber.cpp;/home/zilu/桌面/DKVStorage/src/fiber/hook.cpp;/home/zilu/桌面/DKVStorage/src/fiber/iomanager.cpp;/home/zilu/桌面/DKVStorage/src/fiber/scheduler.cpp;/home/zilu/桌面/DKVStorage/src/fiber/thread.cpp;/home/zilu/桌面/DKVStorage/src/fiber/timer.cpp;/home/zilu/桌面/DKVStorage/src/fiber/utils.cpp
 //Description of the variable
 src_raftClient:INTERNAL=/home/zilu/桌面/DKVStorage/src/raftClient/raftclient.cc;/home/zilu/桌面/DKVStorage/src/raftClient/raftserverrpcutil.cc
 //Description of the variable
@@ -382,5 +372,5 @@ src_raftCore:INTERNAL=/home/zilu/桌面/DKVStorage/src/raftCore/kvserver.cc;/hom
 //Description of the variable
 src_raftRpc:INTERNAL=/home/zilu/桌面/DKVStorage/src/raftRpc/kvserverrpc.pb.cc;/home/zilu/桌面/DKVStorage/src/raftRpc/raftrpc.pb.cc
 //Description of the variable
-src_rpc:INTERNAL=/home/zilu/桌面/DKVStorage/src/rpc/logger.cc;/home/zilu/桌面/DKVStorage/src/rpc/mprpcapplication.cc;/home/zilu/桌面/DKVStorage/src/rpc/mprpcchannel.cc;/home/zilu/桌面/DKVStorage/src/rpc/mprpcconfig.cc;/home/zilu/桌面/DKVStorage/src/rpc/mprpccontroller.cc;/home/zilu/桌面/DKVStorage/src/rpc/rpcheader.pb.cc;/home/zilu/桌面/DKVStorage/src/rpc/rpcprovider.cc
+src_rpc:INTERNAL=/home/zilu/桌面/DKVStorage/src/rpc/logger.cc;/home/zilu/桌面/DKVStorage/src/rpc/mprpcchannel.cc;/home/zilu/桌面/DKVStorage/src/rpc/mprpcconfig.cc;/home/zilu/桌面/DKVStorage/src/rpc/mprpccontroller.cc;/home/zilu/桌面/DKVStorage/src/rpc/rpcheader.pb.cc;/home/zilu/桌面/DKVStorage/src/rpc/rpcprovider.cc
 

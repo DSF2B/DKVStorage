@@ -1,5 +1,4 @@
 #include "rpcprovider.h"
-#include <mprpcapplication.h>
 #include "rpcheader.pb.h"
 #include "logger.h"
 
@@ -64,15 +63,13 @@ void RpcProvider::Run(int nodeIndex, short port){
     muduo_server_->start();
     std::cout<<"event start loop"<<std::endl;
     event_loop_.loop();
-    
-}   
+}
 
 void RpcProvider::OnConnection(const muduo::net::TcpConnectionPtr &conn){
     if(!conn->connected()){
-        std::cout<<"connect shutdown"<<std::endl;
+        std::cout<<"new connect request"<<std::endl;
         conn->shutdown();
     }
-    std::cout<<"connect success"<<std::endl;
 }
 /*
     框架内部RpcProvider和RpceConsumer约定protobuf数据格式

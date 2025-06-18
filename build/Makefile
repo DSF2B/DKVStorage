@@ -460,30 +460,6 @@ src/rpc/logger.cc.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/rpc/logger.cc.s
 .PHONY : src/rpc/logger.cc.s
 
-src/rpc/mprpcapplication.o: src/rpc/mprpcapplication.cc.o
-.PHONY : src/rpc/mprpcapplication.o
-
-# target to build an object file
-src/rpc/mprpcapplication.cc.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcapplication.cc.o
-.PHONY : src/rpc/mprpcapplication.cc.o
-
-src/rpc/mprpcapplication.i: src/rpc/mprpcapplication.cc.i
-.PHONY : src/rpc/mprpcapplication.i
-
-# target to preprocess a source file
-src/rpc/mprpcapplication.cc.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcapplication.cc.i
-.PHONY : src/rpc/mprpcapplication.cc.i
-
-src/rpc/mprpcapplication.s: src/rpc/mprpcapplication.cc.s
-.PHONY : src/rpc/mprpcapplication.s
-
-# target to generate assembly for a file
-src/rpc/mprpcapplication.cc.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/skip_list_on_raft.dir/build.make CMakeFiles/skip_list_on_raft.dir/src/rpc/mprpcapplication.cc.s
-.PHONY : src/rpc/mprpcapplication.cc.s
-
 src/rpc/mprpcchannel.o: src/rpc/mprpcchannel.cc.o
 .PHONY : src/rpc/mprpcchannel.o
 
@@ -650,9 +626,6 @@ help:
 	@echo "... src/rpc/logger.o"
 	@echo "... src/rpc/logger.i"
 	@echo "... src/rpc/logger.s"
-	@echo "... src/rpc/mprpcapplication.o"
-	@echo "... src/rpc/mprpcapplication.i"
-	@echo "... src/rpc/mprpcapplication.s"
 	@echo "... src/rpc/mprpcchannel.o"
 	@echo "... src/rpc/mprpcchannel.i"
 	@echo "... src/rpc/mprpcchannel.s"

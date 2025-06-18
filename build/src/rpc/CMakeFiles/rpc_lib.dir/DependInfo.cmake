@@ -10,7 +10,6 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/zilu/桌面/DKVStorage/src/common/util.cc" "src/rpc/CMakeFiles/rpc_lib.dir/__/common/util.cc.o" "gcc" "src/rpc/CMakeFiles/rpc_lib.dir/__/common/util.cc.o.d"
   "/home/zilu/桌面/DKVStorage/src/rpc/logger.cc" "src/rpc/CMakeFiles/rpc_lib.dir/logger.cc.o" "gcc" "src/rpc/CMakeFiles/rpc_lib.dir/logger.cc.o.d"
-  "/home/zilu/桌面/DKVStorage/src/rpc/mprpcapplication.cc" "src/rpc/CMakeFiles/rpc_lib.dir/mprpcapplication.cc.o" "gcc" "src/rpc/CMakeFiles/rpc_lib.dir/mprpcapplication.cc.o.d"
   "/home/zilu/桌面/DKVStorage/src/rpc/mprpcchannel.cc" "src/rpc/CMakeFiles/rpc_lib.dir/mprpcchannel.cc.o" "gcc" "src/rpc/CMakeFiles/rpc_lib.dir/mprpcchannel.cc.o.d"
   "/home/zilu/桌面/DKVStorage/src/rpc/mprpcconfig.cc" "src/rpc/CMakeFiles/rpc_lib.dir/mprpcconfig.cc.o" "gcc" "src/rpc/CMakeFiles/rpc_lib.dir/mprpcconfig.cc.o.d"
   "/home/zilu/桌面/DKVStorage/src/rpc/mprpccontroller.cc" "src/rpc/CMakeFiles/rpc_lib.dir/mprpccontroller.cc.o" "gcc" "src/rpc/CMakeFiles/rpc_lib.dir/mprpccontroller.cc.o.d"

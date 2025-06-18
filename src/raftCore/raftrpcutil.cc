@@ -1,6 +1,6 @@
 #include "raftrpcutil.h"
 #include <mprpcchannel.h>
-#include "mprpcapplication.h"
+#include "mprpccontroller.h"
 
 
 RaftRpcUtil::RaftRpcUtil(std::string ip, uint16_t port)
@@ -10,6 +10,7 @@ RaftRpcUtil::RaftRpcUtil(std::string ip, uint16_t port)
 }
 RaftRpcUtil::~RaftRpcUtil()
 {
+    std::cout<<"raftRpcUtil exit"<<std::endl;
     delete stub_;
 }
 //内部调用远程方法
