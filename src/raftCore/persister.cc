@@ -51,7 +51,7 @@ std::string Persister::readSnapshot(){
 }
 
 long long Persister::raftStateSize(){
-    std::lock_guard<std::mutex> lg(mtx_);
+    std::lock_guard<std::mutex> lock(mtx_);
     return raft_state_size_;
 }
 Persister::Persister(int me):
@@ -113,3 +113,5 @@ void Persister::clearRaftStateAndSnapshot(){
     clearRaftState();
     clearSnapshot();
 }
+
+

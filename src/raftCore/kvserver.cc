@@ -2,10 +2,9 @@
 
 
 KvServer::KvServer(int me,int max_raft_state,std::string node_info_filename,short port):skiplist_(6){
-    //node_info_filename:server节点信息
-    //port:
-    me_=me;
     std::shared_ptr<Persister> persister = std::make_shared<Persister> (me);    
+
+    me_=me;
     max_raft_state_ = max_raft_state;
     apply_chan_=std::make_shared<LockQueue<ApplyMsg>>();
     raft_node_ = std::make_shared<Raft> ();
@@ -177,8 +176,8 @@ void KvServer::get(const raftKVRpcProtoc::GetRequest *request,
             }
         }else {
             response->set_err(ErrWrongLeader);
-            //            DPrintf("[GET ] 不满足：raftCommitOp.ClientId{%v} == op.ClientId{%v} && raftCommitOp.RequestId{%v}
-            //            == op.RequestId{%v}", raftCommitOp.ClientId, op.ClientId, raftCommitOp.RequestId, op.RequestId)
+            //            DPrintf("[GET ] 不满足：raftCommitOp.ClientId{%v} == op.ClientId{%v} && raft_commit_op.RequestId{%v}
+            //            == op.RequestId{%v}", raft_commit_op.ClientId, op.ClientId, raft_commit_op.RequestId, op.RequestId)
         }
     }
     //释放raftIndex的等待队列，删除该队列并解锁
@@ -220,11 +219,11 @@ void KvServer::putAppend(const raftKVRpcProtoc::PutAppendRequest *request,
     if (wait_applychan_.find(raft_log_index) == wait_applychan_.end()) {
         wait_applychan_.insert(std::make_pair(raft_log_index, new LockQueue<Op>()));
     }
-    auto chForRaftIndex = wait_applychan_[raft_log_index];
+    auto ch_for_raft_index = wait_applychan_[raft_log_index];
     lock.unlock();  //直接解锁，等待任务执行完成，不能一直拿锁等待
 
-    Op raftCommitOp;
-    if(!chForRaftIndex->timeoutPop(CONSENSUS_TIMEOUT, &raftCommitOp)) {
+    Op raft_commit_op;
+    if(!ch_for_raft_index->timeoutPop(CONSENSUS_TIMEOUT, &raft_commit_op)) {
         DPrintf(
             "[func -KvServer::PutAppend -kvserver{%d}]TIMEOUT PUTAPPEND !!!! Server %d , get Command <-- Index:%d , "
             "ClientId %s, RequestId %s, Opreation %s Key :%s, Value :%s",
@@ -239,7 +238,7 @@ void KvServer::putAppend(const raftKVRpcProtoc::PutAppendRequest *request,
             "[func -KvServer::PutAppend -kvserver{%d}]WaitChanGetRaftApplyMessage<--Server %d , get Command <-- Index:%d , "
             "ClientId %s, RequestId %d, Opreation %s, Key :%s, Value :%s",
             me_, me_, raft_log_index, &op.client_id_, op.request_id_, &op.operation_, &op.key_, &op.value_);
-        if (raftCommitOp.client_id_ == op.client_id_ && raftCommitOp.request_id_ == op.request_id_) {
+        if (raft_commit_op.client_id_ == op.client_id_ && raft_commit_op.request_id_ == op.request_id_) {
             //这里与get不同，在getCommandFromRaft执行了executePutOpOnKVDB,检查成功就行，即wait_chan里和op里一致
             response->set_err(OK);
         }
@@ -367,3 +366,4 @@ void KvServer::Get(google::protobuf::RpcController *controller, const ::raftKVRp
     KvServer::get(request,response);
     done->Run();
 }
+

@@ -1,6 +1,4 @@
 #include "raftrpcutil.h"
-#include <mprpcchannel.h>
-#include "mprpccontroller.h"
 
 
 RaftRpcUtil::RaftRpcUtil(std::string ip, uint16_t port)

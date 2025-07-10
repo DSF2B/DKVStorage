@@ -1,18 +1,15 @@
 #include "util.h"
-#include <chrono>
-#include <cstdarg>
-#include <cstdio>
-#include <ctime>
-#include <iomanip>
 
-std::chrono::_V2::system_clock::time_point now(){
-    return std::chrono::high_resolution_clock::now();
-}
+
 void myAssert(bool condition, std::string message) {
   if (!condition) {
     std::cerr << "Error: " << message << std::endl;
     std::exit(EXIT_FAILURE);
   }
+}
+
+std::chrono::_V2::system_clock::time_point now(){
+    return std::chrono::high_resolution_clock::now();
 }
 
 std::chrono::milliseconds getRandomizedElectionTimeout(){

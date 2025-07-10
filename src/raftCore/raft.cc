@@ -368,6 +368,11 @@ void Raft::installSnapshot(const raftRpcProtoc::InstallSnapshotRequest *request,
 
     persister_->save(persistData(),request->data());
 }
+//给上层kvserver发送消息
+void Raft::pushMsgToKvServer(ApplyMsg msg)
+{
+    apply_chan_->push(msg);
+}
 //检查是否该发送心跳，如果是则执行doHeartbeat()
 void Raft::leaderHeartbeatTicker()
 {
@@ -549,6 +554,19 @@ bool Raft::upToDate(int index,int term)
     getLastLogIndexAndTerm(&last_index, &last_term);
     return term > last_term || (term == last_term && index >= last_index);
 }
+
+void Raft::getLastLogIndexAndTerm(int* last_log_index,int* last_log_term)
+{
+    if(logs_.empty()){
+        *last_log_index = last_snapshot_include_index_;
+        *last_log_term = last_snapshot_include_term_;
+        return;
+    }else{
+        *last_log_index = logs_[logs_.size()-1].logindex();
+        *last_log_term = logs_[logs_.size()-1].logterm();
+        return ;
+    }
+}
 int Raft::getLastLogIndex()
 {
     int last_log_index=-1;
@@ -563,33 +581,26 @@ int Raft::getLastLogTerm()
     getLastLogIndexAndTerm(&_,&last_log_term);
     return last_log_term;
 }
-void Raft::getLastLogIndexAndTerm(int* last_log_index,int* last_log_term)
-{
-    if(logs_.empty()){
-        *last_log_index = last_snapshot_include_index_;
-        *last_log_term = last_snapshot_include_term_;
-        return;
-    }else{
-        *last_log_index = logs_[logs_.size()-1].logindex();
-        *last_log_term = logs_[logs_.size()-1].logterm();
-        return ;
-    }
-}
+
 int Raft::getLogTermFromLogIndex(int log_index)
 {
     myAssert(log_index >= last_snapshot_include_index_,
         format("[func-getSlicesIndexFromLogIndex-rf{%d}]  index{%d} < rf.lastSnapshotIncludeIndex{%d}", me_,
         log_index, last_snapshot_include_index_));
+    
     int last_log_index = getLastLogIndex();
-    myAssert(log_index <= last_log_index, format("[func-getSlicesIndexFromLogIndex-rf{%d}]  logIndex{%d} > lastLogIndex{%d}",
+
+    myAssert(log_index <= last_log_index, 
+        format("[func-getSlicesIndexFromLogIndex-rf{%d}]  logIndex{%d} > lastLogIndex{%d}",
                     me_, log_index, last_log_index));
 
     if(log_index == last_snapshot_include_index_){
-        return last_snapshot_include_index_;
+        return last_snapshot_include_term_;
     }else{
         return logs_[getSlicesIndexFromLogIndex(log_index)].logterm();
     }
 }
+
 int Raft::getRaftStateSize()
 {
     return persister_->raftStateSize();
@@ -606,6 +617,8 @@ int Raft::getSlicesIndexFromLogIndex(int log_index)
     int slice_index=log_index - last_snapshot_include_index_ -1;
     return slice_index;
 }
+
+
 //请求其他节点给自己投票，
 bool Raft::sendRequestVote(int server,std::shared_ptr<raftRpcProtoc::RequestVoteRequest> request,
     std::shared_ptr<raftRpcProtoc::RequestVoteResponse> response,std::shared_ptr<int> vote_num)
@@ -660,7 +673,10 @@ bool Raft::sendRequestVote(int server,std::shared_ptr<raftRpcProtoc::RequestVote
     }
     return true;
 }
-//向其他节点发送日志,调用其AppendEntries远程方法
+
+
+
+// 向其他节点发送日志,调用其AppendEntries远程方法
 bool Raft::sendAppendEntries(int i,std::shared_ptr<raftRpcProtoc::AppendEntriesRequest> request,
     std::shared_ptr<raftRpcProtoc::AppendEntriesResponse> response,std::shared_ptr<int> append_num)
 {
@@ -733,82 +749,34 @@ bool Raft::sendAppendEntries(int i,std::shared_ptr<raftRpcProtoc::AppendEntriesR
     }
     return ok;
 }
-//给上层kvserver发送消息
-void Raft::pushMsgToKvServer(ApplyMsg msg)
-{
-    apply_chan_->push(msg);
-}
-//加载读取被持久化的节点
-void Raft::readPersist(std::string data)
-{
-    if(data.empty()){
-        return ;
-    }
-    std::stringstream iss(data);
-    boost::archive::text_iarchive ia(iss);
-    BoostPersistRaftNode boostPersistRaftNode;
-    ia >> boostPersistRaftNode;
-    current_term_ = boostPersistRaftNode.current_term_;
-    votedfor_ = boostPersistRaftNode.voted_for_;
-    last_snapshot_include_index_ = boostPersistRaftNode.last_snapshot_include_index_;
-    last_snapshot_include_term_ = boostPersistRaftNode.last_snapshot_include_term_;
-    logs_.clear();
-    for(auto& item:boostPersistRaftNode.logs_){
-        raftRpcProtoc::LogEntry log_entry;
-        //log先通过protobuffer序列化，再通过boost序列化持久化
-        log_entry.ParseFromString(item);
-        logs_.emplace_back(log_entry);
-    }
-}
-//持久化数据,返回序列化后的节点state
-std::string Raft::persistData()
-{
-    BoostPersistRaftNode boostPersistRaftNode;
-    boostPersistRaftNode.current_term_=current_term_;
-    boostPersistRaftNode.voted_for_=votedfor_;
-    boostPersistRaftNode.last_snapshot_include_index_=last_snapshot_include_index_;
-    boostPersistRaftNode.last_snapshot_include_term_=last_snapshot_include_term_;
-    for(auto& item:logs_){
-        //将log结构体通过protoc序列化为st，再通过boost序列化持久化
-        boostPersistRaftNode.logs_.push_back(item.SerializeAsString());
-    }
-    std::stringstream ss;
-    boost::archive::text_oarchive oa(ss);
-    oa << boostPersistRaftNode;
-    return ss.str();
-}
-//将index之前的log去掉
-void Raft::snapshot(int index,std::string snapshot)
-{
-    std::lock_guard<std::mutex> lock(mtx_);
-    if(last_snapshot_include_index_ >= index || index>commit_index_){
-        DPrintf(
-            "[func-Snapshot-rf{%d}] rejects replacing log with snapshotIndex %d as current snapshotIndex %d is larger or "
-            "smaller ",
-            me_, index, last_snapshot_include_index_);
-        return;
-    }
-    auto last_log_index = getLastLogIndex();
-    int new_last_snapshot_include_index = index;
-    int new_last_snapshot_include_term = logs_[getSlicesIndexFromLogIndex(index)].logterm();
-    std::vector<raftRpcProtoc::LogEntry> trunckedLogs;
 
-    for(int i=index+1;i<=getLastLogIndex();i++){
-        trunckedLogs.emplace_back(logs_[getSlicesIndexFromLogIndex(i)]);
-    }
-    last_snapshot_include_index_=new_last_snapshot_include_index;
-    last_snapshot_include_term_ = new_last_snapshot_include_term;
-    logs_=trunckedLogs;
-    commit_index_=std::max(commit_index_,index);
-    last_appiled_=std::max(last_appiled_,index);
-
-    persister_->save(persistData(),snapshot);
-  DPrintf("[SnapShot]Server %d snapshot snapshot index {%d}, term {%d}, loglen {%d}", me_, index,
-        last_snapshot_include_index_, logs_.size());
-  myAssert(logs_.size() + last_snapshot_include_index_ == last_log_index,
-        format("len(rf.logs){%d} + rf.lastSnapshotIncludeIndex{%d} != lastLogjInde{%d}", logs_.size(),
-        last_snapshot_include_index_, last_log_index));
+ // 重写基类方法,因为rpc远程调用真正调用的是这个方法
+ //序列化，反序列化等操作rpc框架都已经做完了，因此这里只需要获取值然后真正调用本地方法即可。
+ void Raft::AppendEntries(google::protobuf::RpcController *controller, 
+    const raftRpcProtoc::AppendEntriesRequest *request,
+    raftRpcProtoc::AppendEntriesResponse *response, 
+    google::protobuf::Closure *done)
+{
+    appendEntries(request,response);
+    done->Run();
 }
+ void Raft::InstallSnapshot(google::protobuf::RpcController *controller,
+    const raftRpcProtoc::InstallSnapshotRequest *request,
+    raftRpcProtoc::InstallSnapshotResponse *response, 
+    google::protobuf::Closure *done)
+{
+    installSnapshot(request,response);
+    done->Run();
+}
+ void Raft::RequestVote(google::protobuf::RpcController *controller, 
+    const raftRpcProtoc::RequestVoteRequest *request,
+    raftRpcProtoc::RequestVoteResponse *response, 
+    google::protobuf::Closure *done)
+{
+    requestVote(request,response);
+    done->Run();
+}
+
 //执行一个command
 void Raft::start(Op command,int* new_log_index,int* new_log_term,bool* is_leader){
     std::lock_guard<std::mutex> lock(mtx_);
@@ -834,6 +802,7 @@ void Raft::start(Op command,int* new_log_index,int* new_log_term,bool* is_leader
     *new_log_term=new_log_entry.logterm();
     *is_leader=true;
 }
+
 //初始化
 void Raft::init(std::vector<std::shared_ptr<RaftRpcUtil>> peers, 
     int me, 
@@ -883,32 +852,76 @@ void Raft::init(std::vector<std::shared_ptr<RaftRpcUtil>> peers,
 
 }
 
-
-
- // 重写基类方法,因为rpc远程调用真正调用的是这个方法
- //序列化，反序列化等操作rpc框架都已经做完了，因此这里只需要获取值然后真正调用本地方法即可。
- void Raft::AppendEntries(google::protobuf::RpcController *controller, 
-    const raftRpcProtoc::AppendEntriesRequest *request,
-    raftRpcProtoc::AppendEntriesResponse *response, 
-    google::protobuf::Closure *done)
+//持久化数据,返回序列化后的节点state
+std::string Raft::persistData()
 {
-    appendEntries(request,response);
-    done->Run();
+    BoostPersistRaftNode boostPersistRaftNode;
+    boostPersistRaftNode.current_term_=current_term_;
+    boostPersistRaftNode.voted_for_=votedfor_;
+    boostPersistRaftNode.last_snapshot_include_index_=last_snapshot_include_index_;
+    boostPersistRaftNode.last_snapshot_include_term_=last_snapshot_include_term_;
+    for(auto& item:logs_){
+        //将log结构体通过protoc序列化为st，再通过boost序列化持久化
+        boostPersistRaftNode.logs_.push_back(item.SerializeAsString());
+    }
+    std::stringstream ss;
+    boost::archive::text_oarchive oa(ss);
+    oa << boostPersistRaftNode;
+    return ss.str();
 }
- void Raft::InstallSnapshot(google::protobuf::RpcController *controller,
-    const raftRpcProtoc::InstallSnapshotRequest *request,
-    raftRpcProtoc::InstallSnapshotResponse *response, 
-    google::protobuf::Closure *done)
+
+//加载读取被持久化的节点
+void Raft::readPersist(std::string data)
 {
-    installSnapshot(request,response);
-    done->Run();
+    if(data.empty()){
+        return ;
+    }
+    std::stringstream iss(data);
+    boost::archive::text_iarchive ia(iss);
+    BoostPersistRaftNode boostPersistRaftNode;
+    ia >> boostPersistRaftNode;
+    current_term_ = boostPersistRaftNode.current_term_;
+    votedfor_ = boostPersistRaftNode.voted_for_;
+    last_snapshot_include_index_ = boostPersistRaftNode.last_snapshot_include_index_;
+    last_snapshot_include_term_ = boostPersistRaftNode.last_snapshot_include_term_;
+    logs_.clear();
+    for(auto& item:boostPersistRaftNode.logs_){
+        raftRpcProtoc::LogEntry log_entry;
+        //log先通过protobuffer序列化，再通过boost序列化持久化
+        log_entry.ParseFromString(item);
+        logs_.emplace_back(log_entry);
+    }
 }
- void Raft::RequestVote(google::protobuf::RpcController *controller, 
-    const raftRpcProtoc::RequestVoteRequest *request,
-    raftRpcProtoc::RequestVoteResponse *response, 
-    google::protobuf::Closure *done)
+//将index之前的log去掉
+void Raft::snapshot(int index,std::string snapshot)
 {
-    requestVote(request,response);
-    done->Run();
+    std::lock_guard<std::mutex> lock(mtx_);
+    if(last_snapshot_include_index_ >= index || index>commit_index_){
+        DPrintf(
+            "[func-Snapshot-rf{%d}] rejects replacing log with snapshotIndex %d as current snapshotIndex %d is larger or "
+            "smaller ",
+            me_, index, last_snapshot_include_index_);
+        return;
+    }
+    auto last_log_index = getLastLogIndex();
+    int new_last_snapshot_include_index = index;
+    int new_last_snapshot_include_term = logs_[getSlicesIndexFromLogIndex(index)].logterm();
+    std::vector<raftRpcProtoc::LogEntry> trunckedLogs;
+
+    for(int i=index+1;i<=getLastLogIndex();i++){
+        trunckedLogs.emplace_back(logs_[getSlicesIndexFromLogIndex(i)]);
+    }
+    last_snapshot_include_index_=new_last_snapshot_include_index;
+    last_snapshot_include_term_ = new_last_snapshot_include_term;
+    logs_=trunckedLogs;
+    commit_index_=std::max(commit_index_,index);
+    last_appiled_=std::max(last_appiled_,index);
+
+    persister_->save(persistData(),snapshot);
+  DPrintf("[SnapShot]Server %d snapshot snapshot index {%d}, term {%d}, loglen {%d}", me_, index,
+        last_snapshot_include_index_, logs_.size());
+  myAssert(logs_.size() + last_snapshot_include_index_ == last_log_index,
+        format("len(rf.logs){%d} + rf.lastSnapshotIncludeIndex{%d} != lastLogjInde{%d}", logs_.size(),
+        last_snapshot_include_index_, last_log_index));
 }
 

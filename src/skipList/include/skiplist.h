@@ -1,4 +1,11 @@
 #pragma once
+#include <boost/any.hpp>
+#include <boost/serialization/serialization.hpp>
+#include <boost/serialization/string.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
@@ -7,9 +14,7 @@
 #include <mutex>
 #include <vector>
 
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/serialization/vector.hpp>
+#define STORE_FILE "store/dumpFile"
 
 static std::string delimiter = ":";
 
@@ -33,7 +38,7 @@ template <typename K, typename V>
 Node<K, V>::Node(K k,V v,int level): key_(k), value_(v), node_level_(level) {
     // forward_ = new Node<K, V> *[level + 1];
     // memset(forward_, 0, sizeof(Node<K, V> *) * (level + 1));
-    forward_ = std::vector<Node<K, V>*>(level + 1, nullptr);
+    forward_ = std::vector<Node<K, V>*>(level + 1,nullptr);
 };
 
 template <typename K, typename V>

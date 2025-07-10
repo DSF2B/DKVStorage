@@ -74,7 +74,7 @@ void RaftClient::putAppend(std::string key,std::string value,std::string op){
         request.set_value(value);
         request.set_clientid(client_id_);
         request.set_op(op);
-        request.set_requestid(request_id_);
+        request.set_requestid(request_id);
         raftKVRpcProtoc::PutAppendResponse response;
         bool ok=servers_[server]->putAppend(&request,&response);
         if(!ok || response.err() == ErrWrongLeader){

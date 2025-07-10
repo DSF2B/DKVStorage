@@ -6,16 +6,21 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#include <sstream>
-#include <mutex>
-#include <condition_variable>
-#include <random>
+#include <condition_variable>  // pthread_condition_t
 #include <functional>
-#include <queue>
-#include <thread>
 #include <iostream>
+#include <mutex>  // pthread_mutex_t
+#include <queue>
+#include <random>
 #include <sstream>
-#include "config.h" 
+#include <thread>
+#include <chrono>
+#include <cstdarg>
+#include <cstdio>
+#include <ctime>
+#include <iomanip>
+
+#include "config.h"
 template <class F>
 class DeferClass {
  public:
@@ -37,14 +42,9 @@ class DeferClass {
 #undef DEFER
 #define DEFER _MAKE_DEFER_(__LINE__)
 
-std::chrono::_V2::system_clock::time_point now();
-
-std::chrono::milliseconds getRandomizedElectionTimeout();
-
-void sleepNMilliseconds(int N);
+void DPrintf(const char* format, ...);
 void myAssert(bool condition, std::string message = "Assertion failed!");
 
-void DPrintf(const char* format, ...);
 template <typename... Args>
 std::string format(const char* format_str, Args... args) {
     int size_s = std::snprintf(nullptr, 0, format_str, args...) + 1; // "\0"
@@ -54,6 +54,13 @@ std::string format(const char* format_str, Args... args) {
     std::snprintf(buf.data(), size, format_str, args...);
     return std::string(buf.data(), buf.data() + size - 1);  // remove '\0'
 }
+
+std::chrono::_V2::system_clock::time_point now();
+
+std::chrono::milliseconds getRandomizedElectionTimeout();
+
+void sleepNMilliseconds(int N);
+
 template<typename T>
 class LockQueue
 {
@@ -125,6 +132,12 @@ public:
         ia >> *this;
         return true;  
     }
+ public:
+  friend std::ostream& operator<<(std::ostream& os, const Op& obj) {
+    os << "[MyClass:operation_{" + obj.operation_ + "},key_{" + obj.key_ + "},value_{" + obj.value_ + "},client_id_{" +
+              obj.client_id_ + "},request_id_{" + std::to_string(obj.request_id_) + "}";  // 在这里实现自定义的输出格式
+    return os;
+  }
 private:
     friend class boost::serialization::access;
     template <class Archive>

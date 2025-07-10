@@ -1,10 +1,8 @@
 #pragma once
-#include <string>
-#include "util.h"
 #include <fstream>
 #include <mutex>
 
-
+#include "util.h"
 class Persister{
 public:
     void save(std::string raftstate, std::string snapshot);

@@ -1,5 +1,7 @@
 #pragma once
 #include "raftrpc.pb.h"
+#include <mprpcchannel.h>
+#include "mprpccontroller.h"
 
 class RaftRpcUtil{
 public:
