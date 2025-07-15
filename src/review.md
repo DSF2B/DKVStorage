@@ -96,15 +96,16 @@ serialize () 在对象序列化或恢复时自动调用。它应从来不被明�
 
 Provider监听远程请求，收到请求执行回调函数OnMessage，解析请求的服务及方法，通过service->CallMethod(method,nullptr,request,response,done); 这里回调函数为SendRpcResponse。这里Provider的CallMethod根据服务和方法调用raftRpc的CallMethod，执行provider.NotifyService(this);注册重写的方法。
 
-RPC框架：
+**RPC框架**
+
 **Channel**
-* Channel继承google::protobuf::RpcChannel,重写CallMethod，完成完成序列化-网络发送-（远程调用）-网络接受-反序列化，结果保存到response
+* Channel继承google::protobuf::RpcChannel,重写其CallMethod，完成完成序列化-网络发送-（远程调用）-网络接受-反序列化，结果保存到response
     ```
-    virtual void CallMethod(const MethodDescriptor* method,
+    virtual void RpcChannel::CallMethod(const MethodDescriptor* method,
     RpcController* controller, const Message* request,
     Message* response, Closure* done) = 0;
     ```
-* 服务接口类class RaftRpcUtil通过stub_->AppendEntries调用Channel的CallMethod
+* 服务接口类class RaftRpcUtil通过stub_->AppendEntries调用RpcChannel的CallMethod，这个类被框架提供者重写。
     ```
     bool RaftRpcUtil::AppendEntries(raftRpcProtoc::AppendEntriesRequest *request, raftRpcProtoc::AppendEntriesResponse *response)
     {
@@ -115,12 +116,17 @@ RPC框架：
         return !controller.Failed();
     }
     ```
-这里的框架实现者提供CallMethod的实现，完成
+**rpc框架自定义的通信协议**
+header_size(4bytes) + head_str(service_name method_name args_size) + args_str
+* header_size：考虑tcp粘包问题，header_size转为固定4bytes32位二进制，使用ReadVarint32i解析
+* head_str：header用一个protobuffer序列化，包括服务名称、方法名称、参数长度。
+* args_str：存储request,response等参数
+CallMethod提取调用的服务、方法，利用send发送，发送失败会重试连接再发送，重试连接失败会直接return。接受响应后ParseFromArray反序列化，把结果保存到response。
+
 **Provider**
 NotifyService(google::protobuf::Service \*service)可接受继承自raftRpcProtoc::raftRpc的子类对象，完成对对这些重写函数的动态注册​​，如raft中的AppendEntries等，获取该类有哪些rpc方法，保存到哈希表中，把str映射到google::protobuf::MethodDescriptor\*，有请求发来时就找到对应方法执行。
 
 Run实现对rpc客户端的监听，收到rpc请求就使用回调函数OnMessage处理，OnMessage完成反序列化，提取出相应方法，从哈希表中找到对应方法，注册回调函数SendRpcResponse（SendRpcResponse完成序列化和响应发送），然后执行CallMethod，执行真正的方法。
-
 ```
 //获取服务和方法 
 google::protobuf::Service *service = it->second.m_service;      
@@ -140,10 +146,10 @@ service->CallMethod(method,nullptr,request,response,done);
 **这里的CallMethod是重载raftRpc的CallMethod，执行对应的方法**
 ```
 void raftRpc::CallMethod(const ::PROTOBUF_NAMESPACE_ID::MethodDescriptor* method,
-                             ::PROTOBUF_NAMESPACE_ID::RpcController* controller,
-                             const ::PROTOBUF_NAMESPACE_ID::Message* request,
-                             ::PROTOBUF_NAMESPACE_ID::Message* response,
-                             ::google::protobuf::Closure* done) {
+    ::PROTOBUF_NAMESPACE_ID::RpcController* controller,
+    const ::PROTOBUF_NAMESPACE_ID::Message* request,
+    ::PROTOBUF_NAMESPACE_ID::Message* response,
+    ::google::protobuf::Closure* done) {
   GOOGLE_DCHECK_EQ(method->service(), file_level_service_descriptors_raftrpc_2eproto[0]);
   switch(method->index()) {
     case 0:
@@ -176,26 +182,274 @@ void raftRpc::CallMethod(const ::PROTOBUF_NAMESPACE_ID::MethodDescriptor* method
   }
 }
 ```
-
-
-**rpc框架定义的通信协议**
-header_size(4bytes) + head_str(service_name method_name args_size) + args_str
-* header_size：考虑tcp粘包问题，header_size转为固定4bytes32位二进制，使用ReadVarint32i解析
-* head_str：header用一个protobuffer序列化，包括服务名称、方法名称、参数长度。
-* args_str：存储request,response等参数
-
-
 # Protobuf
+```
+syntax = "proto3";
+package raftRpcProtoc;
+option cc_generic_services = true;
+message LogEntry{
+    bytes Command = 1;
+    int32 LogTerm=2;
+    int32 LogIndex=3;
+}
+message AppendEntriesRequest{
+    int32 Term=1;
+    int32 LeaderId=2;
+    int32 PrevLogIndex=3;
+    int32 PrevLogTerm=4;
+    repeated LogEntry Entries=5;
+    int32 LeaderCommit=6;
+}
+message AppendEntriesResponse{
+    int32 Term=1;
+    bool Success=2;
+    int32 UpdateNextIndex = 3;//快速调整leader对应的nextIndex
+}
+service raftRpc{
+    rpc AppendEntries(AppendEntriesRequest) returns(AppendEntriesResponse);
+}
+```
 
 # Raft
+Raft 算法被我们分成领导人选举，日志复制，安全性和成员变更几个部分。领导人选举、日志复制采用rpc实现，raft作为服务提供方，继承raftRpcProtoc::raftRpc，重写实际的方法.raft作为服务调用方，存储了其他raft节点的对外借口std::vector<std::shared_ptr<RaftRpcUtil>> peers_，调用其远程方法即可完成消息传递。
+`bool ok = peers_[server]->RequestVote(request.get(),response.get());`
+
+
+raftutil通过raftRpc_Stub的stub_即可调用远程方法。
+```
+ void AppendEntries(google::protobuf::RpcController *controller, const raftRpcProtoc::AppendEntriesRequest *request,
+    raftRpcProtoc::AppendEntriesResponse *response, ::google::protobuf::Closure *done) override;
+ void InstallSnapshot(google::protobuf::RpcController *controller,const raftRpcProtoc::InstallSnapshotRequest *request,
+    raftRpcProtoc::InstallSnapshotResponse *response, ::google::protobuf::Closure *done) override;
+ void RequestVote(google::protobuf::RpcController *controller, const raftRpcProtoc::RequestVoteRequest *request,
+    raftRpcProtoc::RequestVoteResponse *response, google::protobuf::Closure *done) override;
+```
+
+**raft节点基本状态：**
+|状态|含义|
+|---|---|
+|currentTerm|服务器已知最新的任期（在服务器首次启动时初始化为0，单调递增）|
+|votedFor|当前任期内收到选票的 candidateId，如果没有投给任何候选人 则为空|
+|log[]|日志条目；每个条目包含了用于状态机的命令，以及领导人接收到该条目时的任期（初始索引为1）|
+|commitIndex|已知已提交的最高的日志条目的索引（初始值为0，单调递增）|
+|lastApplied|已经被应用到状态机的最高的日志条目的索引（初始值为0，单调递增）|
+
+**Leader的独有状态：**
+|状态|含义|
+|---|---|
+|nextIndex[]|对于每一台服务器，发送到该服务器的下一个日志条目的索引（初始值为领导人最后的日志条目的索引+1）
+|matchIndex[]|对于每一台服务器，已知的已经复制到该服务器的最高日志条目的索引（初始值为0，单调递增）|
+
+Raft使用三个线程运行三个计时器，完成定时选举、日志复制和日志提交。
+**选举、日志复制:**计时器睡眠指定时间，检查上次心跳时间是否被重置，来判断是否需要执行任务。逻辑如下：
+```
+while not leader{
+    usleep
+}
+{
+    lock()
+    wakeTime=now()
+    suitableSleepTime=HeartbeatTimeout-（wakeTime-last_rest_heartbeat_time_）
+}
+if(suitableSleepTime>0){
+    usleep(suitableSleepTime)
+}
+if(last_rest_heartbeat_time_ > wakeTime){
+    continue;
+}
+doElection() or doHeartbeat()
+```
+**当收到日志、发起选举请求、收到快照、leader发现自己落后、收到选举请求时，重置上次选举时间，触发选举。**
+`last_rest_heartbeat_time_=now()`
+
+**日志提交**：睡眠固定时间，唤醒将可以已提交的日志，提交到kvserver,通过push到apply_chan_完成。
+
+![raft_struc](../images/raft_struc.png)
 
 ## 领导者选举
+|参数|含义|
+|---|---|
+|term|候选人的任期号|
+|candidateId|请求选票的候选人的 ID|
+|lastLogIndex|候选人的最后日志条目的索引值|
+|lastLogTerm|候选人最后日志条目的任期号|
+
+|参数|含义|
+|---|---|
+|term|当前任期号，以便于候选人去更新自己的任期号|
+|voteGranted|候选人赢得了此张选票时为真|
+
+**发起者、客户端 doElection()**
+定时器触发选举，加锁，如果是Leader，continue。
+更新节点基本状态，持久化，重置超时时间，向每个节点发起投票，每个节点开一个线程sendRequestVote。
+
+sendRequestVote中收到结果后，对每个返回值进行判断：
+**term**
+1. term>current_term
+    改变基本状态，设置为Follower
+2. term<current_term
+   return
+
+**voteGranted**
+1. false
+   return
+2. true
+    判断已经有几个人投给自己，超过半数：
+    * 清空票数
+    * 状态变为Leader
+    * 设置next_index[]为last_log_index+1,从最新的开始发，follower如果已经有，告知该发哪个。这里逐个选期判断，每次设置为选期的第一个。
+    * 设置match_index[]为0,从最新的开始匹配
+    * doHeartbeat()
+
+**处理者、服务器端 requestVote()**
+基本逻辑就是如果term < currentTerm返回 false；如果 votedFor 为空或者为 candidateId，并且候选人的日志至少和自己一样新，那么就投票给他。
+
+requestVote依次判断请求值
+**term**
+1. term<current_term
+   候选者落后，写入response，return
+2. term>current_term
+   修改自己的基本状态为follower
+
+**lastLogIndex&lastLogTerm**
+upToDate判断以下条件成立
+term > last_term || (term == last_term && index >= last_index)
+否则不给他投票，return
+**candidateId**
+如果本节点已经投给其他人，return
+否则，投给该节点，重置选举计时器。
 
 ## 日志复制
+|参数|含义|
+|---|---|
+|term|领导人的任期|
+|leaderId|领导人 ID 因此跟随者可以对客户端进行重定向（译者注：跟随者根据领导人 ID 把客户端的请求重定向到领导人，比如有时客户端把请求发给了跟随者而不是领导人）|
+|prevLogIndex|紧邻新日志条目之前的那个日志条目的索引|
+|prevLogTerm|紧邻新日志条目之前的那个日志条目的任期|
+|entries[]|需要被保存的日志条目（被当做心跳使用时，则日志条目内容为空；为了提高效率可能一次性发送多个）|
+|leaderCommit|领导人的已知已提交的最高的日志条目的索引|
+
+|返回值|含义|
+|---|---|
+|term|当前任期，对于领导人而言 它会更新自己的任期|
+|success|如果跟随者所含有的条目和 prevLogIndex 以及 prevLogTerm 匹配上了，则为 true|
+
+leader通过心跳同时完成日志同步和对其他节点的压制，follower节点收到日志后，会重置超时计时器，避免发起选举。
+**日志匹配特性（Log Matching Property）：**
+**如果在不同的日志中的两个条目拥有相同的索引和任期号，那么他们存储了相同的指令。**
+**如果在不同的日志中的两个条目拥有相同的索引和任期号，那么他们之前的所有日志条目也全部相同。**
+
+**注意：**raft为了避免出现一致性问题，要求 leader 绝不会提交过去的 term 的 entry （即使该entry 已经被复制到了多数节点上）。leader永远只提交当前 term 的 entry， 过去的 entry 只会随着当前的 entry 被一并提交。
+
+**发起者、客户端 doHeartbeat()**
+定时器触发日志复制，加锁，Leader才能发送日志。
+给每个peer复制日志：
+1. 首先判断是否发送快照，如果next_index<last_snapshot_include_index，开一个线程leaderSendSnapshot，continue
+2. 构造要发送的日志，判断从现有日志哪里开始发，如果上一次发送的日志在快照里，就把所有日志发送，否则从上一次发送的日志后面开始发
+3. 开一个线程，sendAppendEntries
+4. 更新心跳计时器last_rest_heartbeat_time_=now()
+
+**处理者、服务器端**
+appendEntries依次判断请求值
+**term**
+1. term<current_term
+    false，告知leader需要更新,return
+2. term>current_term
+    把基本状态设置为follower
+
+**prevlogindex**
+1. prevlogindex>last_log_index
+   发来的日志比最新的还新，告诉leader发本节点的下一个日志，return
+2. prevlogindex<last_snapshot_index_
+   发来的日志比快照里的晚，告诉leader发快照的下一个日志
+
+**prevlogterm**
+1. prevlogterm == getLogTermFromLogIndex(prevlogindex)
+   前一个日志匹配，可以拷贝日志。
+   遍历发来的日志：
+   * 如果log比最新的log的index大，说明这个h日子的位置上没有log，直接添加。
+   * 否则，这个log的index位置上有log,比较日志的term,不相等就不匹配，更新为发来的日志
+2. prevlogterm != getLogTermFromLogIndex(prevlogindex)
+    向前寻找，找到前一个日志不匹配的第一个位置，告诉leader下一个重发这个日志
+
+**leadercommit**
+1. leadercommit>commit_index
+   需要增加可以提供的日志，但最多到本节点拥有的最新节点commit_index_=std::min(request->leadercommit(),getLastLogIndex());
 
 ## 日志快照
+|参数|含义|
+|---|---|
+|term|领导人的任期号|
+|leaderId|领导人的 ID，以便于跟随者重定向请求|
+|lastIncludedIndex|快照中包含的最后日志条目的索引值|
+|lastIncludedTerm|快照中包含的最后日志条目的任期号|
+|data[]|从偏移量开始的快照分块的原始字节|
+
+|返回值|含义|
+|---|---|
+|term|当前任期号（currentTerm），便于领导人更新自己|
+
+上层kvserver制作日志的快照，即状态机的持久化内容。如果日志过多就制作快照，增加last_snapshot_include_index_。快照的同步由raft节点负责。快照是持久化的，存在磁盘中，由perisister从文件中读写。
+
+**发起者、客户端**
+心跳doHeartbeat时，如果该节点的next_index[i]< last_snapshot_include_index,即leader收到了kvserver新的快照，向该节点发送快照。用persister->readSnapshot从文件读取快照，发起rpc请求。
+
+判断返回值：
+1. term>current_term
+   本leader已经落后，变为follower,发起选举，return
+2. term<=current_term
+   更新match_index[i]为快照最后一个日志
+   更新next_index[i]为更新match_index[i]+1
+
+**处理者、服务器端**
+1. term<current_term
+   返回current_term，return
+2. term>current_term
+   更新节点状态
+3. 重置选举超时计时器
+3. request的快照比本节点快照旧，return
+4. 删掉本节点的日志中与request的快照重合的部分，
+   * 如果本节点日志比快照多，只留下快照后面的日志
+   * 如果本节点日志比快照少，全部删掉
+5. 更新commit_index和last_appiled为本节点值和快照最后的日志的最大值
+6. 把快照取出制作ApplyMsg，开一个线程提交到kvserver，即push到apply_chan
+7. 使用persister->save,把节点状态和新的快照持久化
+
+**kvserver将状态机快照传递至raft层**
+**snapshot(int index,std::string snapshot)**
+1. index为新的last_snapshot_include_index，必须比提交的日志旧，比旧的快照新。
+2. 把快照包括的日志去掉，更新commit_index和last_appiled。
+3. 持久化日志状态和快照
+
+## 提交
+applyTicker定时唤醒执行，利用getApplyLogs获取已经提交的日志，while(last_appiled_< commit_index_)制作ApplyMsgs,然后逐个提交到apply_chan_，传递到kvserver层的kv状态机（跳表）。
+
 
 ## 持久化
+持久化**节点状态和状态机快照**，分别存放在raft_state_out_stream_和snapshot_out_stream_，节点状态包括基本状态和日志，
+**Raft中的持久化相关方法**
+persisit：序列化节点状态，使用persister持久化节点状态。
+persistData()：序列化节点状态。
+readPersist：反序列化节点状态，加载节点状态。
+
+需要先序列化再持久化写入文件。
+* 基本状态只需要boost序列化。
+* 日志要先protobuf序列化，再boost序列化。
+* 快照使用状态机的持久化方法，就是跳表的持久化方法：boost
+* 快照是持久化保存的，每次利用persister读写
+
+**持久化基本方法：**
+**​​std::ofstream 方式​**
+    专用于文件输出的流类，仅支持写入操作
+    save():保存节点状态和日志快照，其他节点或kvserver发来快照时使用。
+    saveRaftState():保存节点状态。
+
+**​​std::fstream 方式​**
+    通用文件流类，支持读写操作
+    readRaftState():raft初始化使用。
+    readSnapshot():向其他节点发生快照时使用，快照文件较大，因此需要先关闭snapshot_out_stream_，**避免写冲突，强制刷新缓冲区，保证读取到最新数据，长期保持大文件输出流打开会​​占用文件句柄和内存**
+
+**持久化的时机：每当节点基本状态或快照改变时，持久化节点状态或快照**
 
 ## KVServer
 

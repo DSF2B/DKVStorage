@@ -27,7 +27,7 @@
 constexpr int Killed = 0;
 constexpr int Voted = 1;   //该节点本轮已投出票
 constexpr int Expire = 2;  //网络分区了，投票消息、或该竞选者落伍了
-constexpr int Normal = 3;   //
+constexpr int Normal = 3;   
 class Raft: public raftRpcProtoc::raftRpc{
 public:
     //日志+心跳

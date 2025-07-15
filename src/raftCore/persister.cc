@@ -24,7 +24,7 @@ std::string Persister::readRaftState(){
 
 void Persister::saveRaftState(const std::string &data) {
     std::lock_guard<std::mutex> lock(mtx_);
-    // 将raftstate和snapshot写入本地文件
+    // 持久化节点状态
     //清除stream
     clearRaftState();
     raft_state_out_stream_ << data;

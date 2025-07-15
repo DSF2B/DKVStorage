@@ -516,13 +516,7 @@ void Raft::requestVote(const raftRpcProtoc::RequestVoteRequest *request,
     //candidate日志太旧
     if(!upToDate(request->lastlogindex(),request->lastlogterm())){
         //如果是candidate的term落后
-        if(request->lastlogterm() < last_log_term){
-            //LOG
-        }
-        //index落后
-        else{
-            //LOG
-        }
+
         response->set_term(current_term_);
         response->set_votestate(Voted);
         response->set_votegranted(false);
@@ -646,31 +640,33 @@ bool Raft::sendRequestVote(int server,std::shared_ptr<raftRpcProtoc::RequestVote
     if(!response->votegranted()){
         //该节点没给自己投票，结束
         return true; 
-    }
-    *vote_num=*vote_num+1;
-    if(*vote_num >= peers_.size()/2+1){
-        //获得半数以上投票
-        std::cout<<"Become Leader success"<<std::endl;
-        *vote_num=0;
-        if(status_ == Leader){
-            //已经是leader又被选为leader,不正常
-            myAssert(false,
-               format("[func-sendRequestVote-rf{%d}]  term:{%d} 同一个term当两次领导，error", me_, current_term_));
+    }else{
+        *vote_num=*vote_num+1;
+        if(*vote_num >= peers_.size()/2+1){
+            //获得半数以上投票
+            std::cout<<"Become Leader success"<<std::endl;
+            *vote_num=0;
+            if(status_ == Leader){
+                //已经是leader又被选为leader,不正常
+                myAssert(false,
+                format("[func-sendRequestVote-rf{%d}]  term:{%d} 同一个term当两次领导，error", me_, current_term_));
+            }
+            status_=Leader;
+            DPrintf("[func-sendRequestVote rf{%d}] elect success  ,current term:{%d} ,lastLogIndex:{%d}\n", me_, current_term_,
+                getLastLogIndex());
+            int last_log_index = getLastLogIndex();
+            for(int i=0;i<next_index_.size();i++){
+                //next_index从自己的未持久化的index开始
+                next_index_[i]=last_log_index+1;
+                //更换leader要从头开始检查
+                match_index_[i]=0;
+            }
+            std::thread t(&Raft::doHeartbeat,this);
+            t.detach();
+            persist();
         }
-        status_=Leader;
-        DPrintf("[func-sendRequestVote rf{%d}] elect success  ,current term:{%d} ,lastLogIndex:{%d}\n", me_, current_term_,
-            getLastLogIndex());
-        int last_log_index = getLastLogIndex();
-        for(int i=0;i<next_index_.size();i++){
-            //next_index从自己的未持久化的index开始
-            next_index_[i]=last_log_index+1;
-            //更换leader要从头开始检查
-            match_index_[i]=0;
-        }
-        std::thread t(&Raft::doHeartbeat,this);
-        t.detach();
-        persist();
     }
+
     return true;
 }
 
@@ -852,7 +848,7 @@ void Raft::init(std::vector<std::shared_ptr<RaftRpcUtil>> peers,
 
 }
 
-//持久化数据,返回序列化后的节点state
+//序列化节点状态和日志，日志要先protobuf序列化，再boost序列化
 std::string Raft::persistData()
 {
     BoostPersistRaftNode boostPersistRaftNode;
@@ -870,7 +866,7 @@ std::string Raft::persistData()
     return ss.str();
 }
 
-//加载读取被持久化的节点
+//反序列化，加载节点状态和日志，日志要先protobuf序列化，再boost序列化
 void Raft::readPersist(std::string data)
 {
     if(data.empty()){
