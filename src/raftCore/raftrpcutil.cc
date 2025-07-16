@@ -17,7 +17,6 @@ bool RaftRpcUtil::AppendEntries(raftRpcProtoc::AppendEntriesRequest *request, ra
     MprpcController controller;
     stub_->AppendEntries(&controller,request,response,nullptr);
     return !controller.Failed();
-    stub_->
 }
 bool RaftRpcUtil::RequestVote(raftRpcProtoc::RequestVoteRequest *request, raftRpcProtoc::RequestVoteResponse *response)
 {

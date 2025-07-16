@@ -68,7 +68,6 @@ private:
     //每个client请求申请一个lockqueue,作为raft和server层的共享内存，传递该请求是否完成众raft节点的同步，server从lockqueue中取出同步结果，完成db存储和响应client
     std::unordered_map<int,LockQueue<Op>*> wait_applychan_;
     //存储过的请求，保存在last_request_id_，记录每个client最新的请求的id, 用以实现线性一致性，
-
     std::unordered_map<std::string,int> last_request_id_;
 
     int last_snapshot_raftlog_index_;

@@ -358,7 +358,8 @@ void Raft::installSnapshot(const raftRpcProtoc::InstallSnapshotRequest *request,
 
     response->set_term(current_term_);
     ApplyMsg msg;
-    msg.command_vaild_=true;
+    msg.command_vaild_=false;
+    msg.snapshot_vaild_=true;
     msg.snapshot_=request->data();
     msg.snapshot_term_=request->lastincludedterm();
     msg.snapshot_index_=request->lastincludedindex();

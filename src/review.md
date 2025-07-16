@@ -423,7 +423,7 @@ appendEntries依次判断请求值
 
 ## 提交
 applyTicker定时唤醒执行，利用getApplyLogs获取已经提交的日志，while(last_appiled_< commit_index_)制作ApplyMsgs,然后逐个提交到apply_chan_，传递到kvserver层的kv状态机（跳表）。
-
+**apply_chan_采用阻塞队列实现**
 
 ## 持久化
 持久化**节点状态和状态机快照**，分别存放在raft_state_out_stream_和snapshot_out_stream_，节点状态包括基本状态和日志，
@@ -452,8 +452,136 @@ readPersist：反序列化节点状态，加载节点状态。
 **持久化的时机：每当节点基本状态或快照改变时，持久化节点状态或快照**
 
 ## KVServer
+![kvserver](../images/kvserver.png)
+**kvserver作为系统顶层，管理客户端、kv数据库（上层状态机）、raft节点、持久层（persister）之间的交互**
+![kvserver](../images/kvserver_code.png)
 
+**两个重要管道：**
+* **std::unordered_map<int,LockQueue<Op>*> wait_applychan_**
+
+    **每个raft_log_index请求申请一个lockqueue,作为raft和server层的共享内存，传递该请求是否完成同步，server从lockqueue中取出同步结果，完成db存储和响应client**
+
+* **std::shared_ptr<LockQueue<ApplyMsg>> apply_chan_**
+    **与raft节点通信管道**
+
+**两个重要类**
+* **Op**
+kvserver传递给raft的操作,经过boost序列化后作为日志的基本单元command。
+    ```
+    std::string operation_;//"Get" "Put" "Append"
+    std::string key_;
+    std::string value_;
+    std::string client_id_;//客户端id
+    int request_id_;//客户端id请求的request序列号
+    ```
+* **ApplyMsg**
+raft给kvserver的消息，区分传递的是command还是snapshot
+    ```
+    bool command_vaild_;
+    std::string command_;
+    int command_index_;
+    bool snapshot_vaild_;
+    std::string snapshot_;
+    int snapshot_term_;
+    int snapshot_index_;
+    ```
+**kvserver的启动**
+1. 开一个线程，启动与client和与其他raft节点的RPC服务。 
+    ```
+    std::thread t([this,port]()->void{
+    RpcProvider provider;
+    provider.NotifyService(this);//server
+    provider.NotifyService(raft_node_.get());//raft
+    provider.Run(me_,port);
+    });
+    ```
+2. 作为客户端，连接每个raft节点，即初始化RaftRpcUtil类对象。
+3. 启动本节点的raft,raft_node_->init(里面开三个线程，开始做raft的事情)。
+4. 加载快照。
+5. 开一个线程，启动与raft层的通信，readRaftApplyCommandLoop循环执行。
+    ```
+    std::thread t2(&KvServer::readRaftApplyCommandLoop, this);
+    t2.join();//主线程阻塞在这里，等待子线程停止
+    ```
+
+**客户端Client**
+1. 客户端通过RPC与kvserver通信，执行PutAppend和Get函数。
+2. kvserver首先制作Op,然后通过raft_node_->start将Op传递给raft层，如果返回不是leader就立即return;
+3. 否则从wait_applychan_取出这条操作的raft_log_index对应的通信管道，等待管道的结果。
+**if(!ch_for_raft_index->timeoutPop(CONSENSUS_TIMEOUT, &raft_commit_op))**
+4. 通信管道收到消息后，判断是否比这个clienti最新的操作旧，last_request_id_存储每个client最新的操作id。request_id <= last_request_id_[client_id]如果小于等于说明是之前进行过的操作，因为在实际写入数据库时会更新这个last_request_id_[client_id]。
+    **raft保证线性一致性，即Put操作的顺序严格按照请求顺序执行，并保证最终一致；Get 操作返回的是与最新提交的操作一致的数据库状态。**
+    1. 这里如果是get，不必要同步到大多数raft,如果能确定该节点是真正leader也可以直接get走。
+        1. **超时了，如果已经完成了新的请求且是leader；避免因脑裂导致的从脑裂的leader拿到错误的值。因为新的请求要么是get，要么是putAppend。get要么递归更新的请求，要么是raft同步过的；putAppend经raft同步后才会改变last_request_id_。因此能保证本节点是真正的leader,才能executeGetOpOnKVDB。**
+        2. 没超时，wait_applychan_返回的op和原始op一致，executeGetOpOnKVDB。
+    2. 这里如果是putAppend
+         1. 超时了，如果已经是旧的操作了，说明本节点是leader，迟早能同步，返回ok
+         2. 没超时，在getCommandFromRaft中，如果是非重复的操作，已经执行executePutOpOnKVDB或executeAppendOpOnKVDB了，如果wait_applychan_返回的op和原始op一致，返回ok。
+
+
+**kv数据库**
+executePutOpOnKVDB
+executeAppendOpOnKVDB
+executeGetOpOnKVDB
+分别加锁，操作数据库
+**raft层**
+死循环，拿阻塞队列apply_chan_中，raft提交的command（其他节点同步过来的、或kvserver交给raft的，序列化的Op）或snapshot（kvserver层交给raft层同步的快照，持久化的数据库）
+readRaftApplyCommandLoop
+auto message = apply_chan_->pop();
+1. 如果是command,getCommandFromRaft
+    可能是其他raft同步过来的Op，或kvserver调用**raft_node_->start**让raft同步command的结果。
+    1. 解析command,如果是最新的put或append,执行executePutOpOnKVDB或executeAppendOpOnKVDB。这里不执行executeGetOpOnKVDB，因为get不一定需要同步就可以从数据库中查找了，在get中有他的运行逻辑。
+    2. 判断日志是否过多，是否需要制作日志，ifNeedToSendSnapShotCommand。
+    3. 发送消息到wait_applychan_。
+
+2. 如果是snapshot,getSnapShotFromRaft
+    可能是其他raft同步过来的snapshot,或kvserver调用**raft_node_->snapshot**让raft同步snapshot的结果。
+    1. 反序列化snapshot
+    2. skiplist_.loadFile(serialized_KVData_);
+
+
+**raft_node_->start**
+Client向kvserver发起一个请求，kvserver向raft传递一个Op,进行同步。
+raft处理：
+1. 不是leader,return
+2. command序列化，制作成log,放到raft的log中，等待心跳进行同步。
+
+**raft_node_->snapshot**
+kvserver层判断日志是否过多，过多就把kv数据库序列化，在加上last_request_id_，再序列化，交给raft进行同步。
+raft处理：
+1. 这个快照比raft的快照少或比已经同步提交的还新，return
+2. 去掉log中快照及其之前的部分，更新基本状态和leader状态，持久化状态和快照。
+
+
+**快照**
+ifNeedToSendSnapShotCommand：如果raft日志过多，制作日志makeSnapShot，告知raft同步快照raft_node_->snapshot。
+readSnapShotToInstall：读取快照
+
+**快照序列化方法**
+```
+std::string getSnapshotData() {
+    serialized_KVData_ = skiplist_.dumpFile();
+    std::stringstream ss;
+    boost::archive::text_oarchive oa(ss);
+    oa << *this;
+    serialized_KVData_.clear();
+    return ss.str();
+}
+void parseFromString(const std::string &str) {
+    std::stringstream ss(str);
+    boost::archive::text_iarchive ia(ss);
+    ia >> *this;
+    skiplist_.loadFile(serialized_KVData_);
+    serialized_KVData_.clear();
+}
+```
 ## 安全性
+**可能出现的差错：脑裂等等**
+
+
+## 客户端
+构建raftserver远程调用类，调用get、putAppend远程方法即可。
+
 
 # Boost序列化与Protobuf序列化
 Boost序列化库支持多种数据格式，包括二进制、文本和XML。二进制格式（Binary format）提供高效的数据处理速度，适合性能敏感的应用。文本格式（Text format）和XML格式（XML format）则提供了更好的可读性和可编辑性，便于调试和数据交换。
