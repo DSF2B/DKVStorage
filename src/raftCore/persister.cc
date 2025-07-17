@@ -6,6 +6,8 @@ void Persister::save(std::string raft_state, std::string snapshot){
     //将stase和snapshot写入文件
     raft_state_out_stream_<<raft_state;
     snapshot_out_stream_<<snapshot;
+    raft_state_out_stream_.flush();
+    snapshot_out_stream_.flush();
 }
 
 
@@ -28,6 +30,7 @@ void Persister::saveRaftState(const std::string &data) {
     //清除stream
     clearRaftState();
     raft_state_out_stream_ << data;
+    raft_state_out_stream_.flush();
     raft_state_size_ += data.size();
 }
 
@@ -77,6 +80,7 @@ Persister::Persister(int me):
     }
     if (!file_open_flag) {
         DPrintf("[func-Persister::Persister] file open error");
+        assert(false);
     }
     raft_state_out_stream_.open(raft_state_filename_);
     snapshot_out_stream_.open(snapshot_filename_);

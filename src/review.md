@@ -576,8 +576,62 @@ void parseFromString(const std::string &str) {
 }
 ```
 ## 安全性
-**可能出现的差错：脑裂等等**
+* 一个跟随者可能会进入不可用状态同时领导人已经提交了若干的日志条目，然后这个跟随者可能会被选举为领导人并且覆盖这些日志条目；因此，不同的状态机可能会执行不同的指令序列。
+* 领导选举的时候增加一些限制，保证任何的领导人对于给定的任期号，都拥有了之前任期的所有被提交的日志条目
+![safety](../images/safety.png)
+**用下面的限制保证上面的要求**
+* **对于当前任期内的日志，只有超过半数的节点提交该日志，leader才能提交日志。**
+* **leader永远不会仅提交过去任期的日志，而是在提交当前任期时，把之前任期的一起提交。**
 
+**如果没有这个限制，在图c中，如果在收到4后直接让S2S3提交，commit_index增加，last_appiled_增加，可以向kvserver申请提交到数据库；而此时大多数节点还没有都有日志4，S5可能重新当选并覆盖日志2,这样已经提交的日志就被修改了。
+因此需要保证，只有当前term的大多数节点拥有新term的日志后，才能进行提交。此时，S5这种旧日志覆盖已经提交的日志，虽然日志提交慢了。**
+
+**​1. ​当前任期日志​​ → 复制到多数节点 → Leader更新commit_index → 写入Leader状态机。
+​​2. 后续心跳​​ → 广播commit_index → Follower写入状态机。
+这一机制通过​​任期限制​​和​​间接提交​​确保了分布式系统的强一致性与安全性**
+
+**主动遍历日志：从最新日志向旧日志倒序扫描，找到首个满足多数派复制​​且属于当前任期​​的日志索引**
+```
+//leader更新commitIndex
+void Raft::leaderUpdateCommitIndex()
+{
+    commit_index_ = last_snapshot_include_index_;
+    for(int index=getLastLogIndex();index>=last_snapshot_include_index_+1;index--){
+        int sum=0;
+        for(int i=0;i<peers_.size();i++){
+            if(i==me_){
+                sum++;
+                continue;
+            }
+            if(match_index_[i] >= index){
+                //节点i的index是匹配的
+                sum++;
+            }
+        }
+        if(sum>=peers_.size()/2+1 && getLogTermFromLogIndex(index) == current_term_){
+            //超过一般匹配且是当前term的
+            commit_index_=index;
+            break;//从后面循环，找到就退出
+        }
+    }
+}
+```
+**响应式更新：仅当本次RPC携带的日志被多数节点接受时，尝试更新commit_index_**
+```
+//检查是否可以提交日志
+if(*append_num >= peers_.size()/2+1){
+    *append_num=0;//避免重复提交
+    if(request->entries_size() > 0 && request->entries(request->entries_size()-1).logterm() == current_term_){
+        commit_index_=std::max(commit_index_,request->prevlogindex() + request->entries_size());
+    }
+}
+```
+**跟随者和候选人崩溃**
+跟随者和候选人崩溃后的处理方式比领导人要简单的多，并且他们的处理方式是相同的。如果跟随者或者候选人崩溃了，那么后续发送给他们的 RPCs 都会失败。Raft 中处理这种失败就是简单地通过无限的重试；如果崩溃的机器重启了，那么这些 RPC 就会完整的成功。如果一个服务器在完成了一个 RPC，但是还没有响应的时候崩溃了，那么在他重新启动之后就会再次收到同样的请求。Raft 的 RPCs 都是幂等的，所以这样重试不会造成任何问题。
+**时间和可用性**
+Raft 的要求之一就是安全性不能依赖时间：整个系统不能因为某些事件运行的比预期快一点或者慢一点就产生了错误的结果。但是，可用性（系统可以及时的响应客户端）不可避免的要依赖于时间。例如，如果消息交换比服务器故障间隔时间长，候选人将没有足够长的时间来赢得选举；没有一个稳定的领导人，Raft 将无法工作。
+领导人选举是 Raft 中对时间要求最为关键的方面。Raft 可以选举并维持一个稳定的领导人,只要系统满足下面的时间要求：
+`广播时间（broadcastTime） << 选举超时时间（electionTimeout） << 平均故障间隔时间（MTBF）`
 
 ## 客户端
 构建raftserver远程调用类，调用get、putAppend远程方法即可。

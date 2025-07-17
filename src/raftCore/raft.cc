@@ -43,7 +43,6 @@ void Raft::appendEntries(const raftRpcProtoc::AppendEntriesRequest *request,raft
         response->set_term(current_term_);
         response->set_updatenextindex(last_snapshot_include_index_+1);
     }
-    //
     if(matchLog(request->prevlogindex(), request->prevlogterm())){
         //leader的index在快照和本节点最新的日志之间，需要从头开始判断哪些是匹配的日志
         //matchLog检查本节点目前最新的日志的term是否和发来的日志之前的term相同
@@ -739,6 +738,7 @@ bool Raft::sendAppendEntries(int i,std::shared_ptr<raftRpcProtoc::AppendEntriesR
                     commit_index_, request->prevlogindex() + request->entries_size());
                 commit_index_=std::max(commit_index_,request->prevlogindex() + request->entries_size());
             }
+            // leaderUpdateCommitIndex();
             myAssert(commit_index_ <= last_log_index,
                format("[func-sendAppendEntries,rf{%d}] lastLogIndex:%d  rf.commitIndex:%d\n", me_, last_log_index,
                       commit_index_));
