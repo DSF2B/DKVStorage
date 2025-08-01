@@ -78,9 +78,9 @@ void MprpcChannel::CallMethod(
     std::cout<<"try to connect ip:"<<ip_<<"port"<<port_<<std::endl;
 
     //失败会重试连接再发送，重试连接失败会直接return
-    while(send(client_fd_, send_rpc_str.c_str(), send_rpc_str.size(), 0) == -1)
+    while(-1==send(client_fd_, send_rpc_str.c_str(), send_rpc_str.size(), 0))
     {
-        std::cout << "send error!errno:" << errno << std::endl;
+        // std::cout << "send error!errno:" << errno << std::endl;
         char errtext[512] = {0};
         sprintf(errtext,"send error!errno:%d",errno);
         std::cout << "尝试重新连接，对方ip：" << ip_ << " 对方端口" << port_ << std::endl;
@@ -116,7 +116,7 @@ void MprpcChannel::CallMethod(
     {   // response反序列化
         // 失败
         // std::cout << "parse error! response_str:" << recv_buf << std::endl;
-        char errtext[2048] = {0};
+        char errtext[1050] = {0};
         sprintf(errtext,"parse error! response_str:%s",recv_buf);
         controller->SetFailed(errtext);
         return;
@@ -142,7 +142,7 @@ bool MprpcChannel::newConnect(const char* ip,uint16_t port, std::string* errMsg)
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(port);
     server_addr.sin_addr.s_addr = inet_addr(ip);
-    if (connect(clientfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1)
+    if (-1==connect(clientfd, (struct sockaddr *)&server_addr, sizeof(server_addr)))
     {
         std::cout << "connect error!errno:" << errno << std::endl;
         close(client_fd_);

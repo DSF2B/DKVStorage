@@ -12,7 +12,7 @@ KvServer::KvServer(int me,int max_raft_state,std::string node_info_filename,shor
     std::thread t([this,port]()->void{
         RpcProvider provider;
         provider.NotifyService(this);//server
-        provider.NotifyService(raft_node_.get());//raft
+        provider.NotifyService(this->raft_node_.get());//raft
         provider.Run(me_,port);
     });
     t.detach();
@@ -20,7 +20,7 @@ KvServer::KvServer(int me,int max_raft_state,std::string node_info_filename,shor
     //开启rpc远程调用服务，要保证所有raft节点都开启rpc接受功能后才能开启rpc远程调用功能
     //睡眠等待其他节点
     std::cout << "raftServer node:" << me_ << " start to sleep to wait all other raftnode start!!!!" << std::endl;
-    sleep(6);
+    sleep(10);
     std::cout << "raftServer node:" << me_ << " wake up!!!! start to connect other raftnode" << std::endl;
     MprpcConfig config;
     config.LoadConfigFile(node_info_filename.c_str());
@@ -51,7 +51,7 @@ KvServer::KvServer(int me,int max_raft_state,std::string node_info_filename,shor
     }
     //其他节点启动后再启动server
     std::cout<<"sleep "<<ip_port_vt.size() -me_<<"s"<<std::endl;
-    sleep(ip_port_vt.size() -me_);
+    sleep(ip_port_vt.size() - me);
     std::cout<<"start init"<<std::endl;
     raft_node_->init(servers,me_,persister,apply_chan_);
     std::cout<<"raftnode inited"<<std::endl;

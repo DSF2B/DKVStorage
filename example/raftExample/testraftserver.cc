@@ -44,7 +44,7 @@ int main(int argc,char**argv){
         pid_t pid = fork();//创建一个新的子进程也执行后面的程序
         if(pid==0){
             // 如果是子进程
-            auto kv_server=new KvServer(i,500,config_filename,port);
+            auto kv_server=new KvServer(i,50,config_filename,port);
             pause();// 子进程进入等待状态，不会执行 return 语句
         }else if(pid > 0){
             sleep(1);

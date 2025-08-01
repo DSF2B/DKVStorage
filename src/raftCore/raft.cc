@@ -776,7 +776,8 @@ bool Raft::sendAppendEntries(int i,std::shared_ptr<raftRpcProtoc::AppendEntriesR
 
 //执行一个command
 void Raft::start(Op command,int* new_log_index,int* new_log_term,bool* is_leader){
-    std::lock_guard<std::mutex> lock(mtx_);
+    std::lock_guard<std::mutex> lock1(mtx_);
+    DPrintf("raft node:{%d} recved op,status_:%d",me_,status_);
     if(status_ != Leader){
         DPrintf("[func-Start-rf{%d}]  is not leader",me_);
         *new_log_index=-1;
